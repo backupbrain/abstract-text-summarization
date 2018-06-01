@@ -43,7 +43,10 @@ class KerasWordVectorizer:
         words_to_vectors, vectors_to_words = \
             self.__build_word_vector_table(reviews_summaries_word_counts)
         self.__build_word_embedding_matrix(words_to_vectors)
-        word_vector_info = self.__convert_words_to_vectors(reviews_summaries)
+        word_vector_info = self.__convert_words_to_vectors(
+            words_to_vectors,
+            reviews_summaries
+        )
         summaries_word_vectors = word_vector_info["summaries"]["word_vectors"]
         reviews_word_vectors = word_vector_info["reviews"]["word_vectors"]
         sorted_reviews_summaries_word_vectors = self.__sort_summaries(
@@ -90,7 +93,7 @@ class KerasWordVectorizer:
 
     def __build_word_embedding_matrix(self, words_to_vectors):
         self.say("  Creating word embedding matrix...", "")
-        num_words = len(self.words_to_vectors)
+        num_words = len(words_to_vectors)
 
         # Create matrix with default values of zeroo
         word_embedding_matrix = np.zeros(
@@ -113,7 +116,7 @@ class KerasWordVectorizer:
                 word_embedding_matrix[id] = new_embedding
         self.say("Done")
 
-    def __convert_words_to_vectors(self, reviews_summaries):
+    def __convert_words_to_vectors(self, words_to_vectors, reviews_summaries):
         '''Convert words in text to an integer.
            If word is not in vocab_to_int, use UNK's integer.
            Total the number of words and UNKs.
@@ -130,22 +133,22 @@ class KerasWordVectorizer:
             summary_word_vectors = []
             for word in row["summary"].split():
                 summaries_num_words += 1
-                if word in self.words_to_vectors:
-                    summary_word_vectors.append(self.words_to_vectors[word])
+                if word in words_to_vectors:
+                    summary_word_vectors.append(words_to_vectors[word])
                 else:
-                    summary_word_vectors.append(self.words_to_vectors["<UNK>"])
+                    summary_word_vectors.append(words_to_vectors["<UNK>"])
                     summaries_num_unknown_words += 1
                 summaries_word_vectors.append(summary_word_vectors)
 
             review_word_vectors = []
             for word in row["review"].split():
                 reviews_num_words += 1
-                if word in self.words_to_vectors:
-                    review_word_vectors.append(self.words_to_vectors[word])
+                if word in words_to_vectors:
+                    review_word_vectors.append(words_to_vectors[word])
                 else:
-                    review_word_vectors.append(self.words_to_vectors["<UNK>"])
+                    review_word_vectors.append(words_to_vectors["<UNK>"])
                     reviews_num_unknown_words += 1
-                review_word_vectors.append(self.words_to_vectors["<EOS>"])
+                review_word_vectors.append(words_to_vectors["<EOS>"])
                 reviews_word_vectors.append(review_word_vectors)
         result = {
             "summaries": {
