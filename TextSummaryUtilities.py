@@ -14,7 +14,7 @@ class TextSummaryUtilities:
         self.say("Loading nltk and pandas...")
 
     def load_data_from_csv(self, filename):
-        self.say("Loading CSV file: '{}'...".format(filename), "")
+        self.say("Loading CSV file: '{}'... ".format(filename), "")
         data = pd.read_csv(filename)
         self.say("done")
         return data

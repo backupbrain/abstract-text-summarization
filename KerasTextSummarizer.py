@@ -51,11 +51,16 @@ class KerasTextSummarizer:
         self.__build_word_id_table()
         self.__build_word_embedding_matrix()
         word_vector_info = self.__convert_words_to_vectors()
+        summaries_word_vectors = word_vector_info["summaries"]["word_vectors"]
+        reviews_word_vectors = word_vector_info["reviews"]["word_vectors"]
+        lengths_summaries = self.__create_lengths(summaries_word_vectors)
+        lengths_reviews = self.__create_lengths(lengths_summaries)
+        self.__sort_summaries()
         self.say("Done loading data")
 
     def __count_words(self):
         '''Count the number of occurrences of each word in a set of text'''
-        self.say("  Counting number of word occurrences... ", "")
+        self.say("  Counting word occurrences... ", "")
         largest_word_count = 0
         for branch in self.data:
             for row in branch:
@@ -66,7 +71,7 @@ class KerasTextSummarizer:
                         self.word_counts[word] += 1
                     if self.word_counts[word] > largest_word_count:
                         largest_word_count = self.word_counts[word]
-        self.say("done. Max {} occurences.".format(largest_word_count))
+        self.say("done. Max {:,}.".format(largest_word_count))
 
     def __build_word_id_table(self):
         self.say("  Creating word vector table...", "")
@@ -83,7 +88,7 @@ class KerasTextSummarizer:
 
         for word, id in self.words_to_ids.items():
             self.ids_to_words[id] = word
-        self.say("done. Found {} words".format(len(self.ids_to_words)))
+        self.say("done. Found {:,} words".format(len(self.ids_to_words)))
 
     def __build_word_embedding_matrix(self):
         self.say("  Creating word embedding matrix...", "")
@@ -122,7 +127,7 @@ class KerasTextSummarizer:
 
         summaries_word_vectors = []
         reviews_word_vectors = []
-        self.say("  Loading word vectors...")
+        self.say("  Loading word vectors... ", "")
         for row in self.data:
             summary_word_vectors = []
             for word in row["summary"].split():
@@ -160,11 +165,21 @@ class KerasTextSummarizer:
         total_unknown_words = \
             summaries_num_unknown_words + reviews_num_unknown_words
         percent_unknown_words = total_unknown_words / total_words_found
-        self.say(" done. Found {} unknown words.".format(
-            total_unknown_words
+        self.say(" done. Found {:,} unknown words ({}%).".format(
+            total_unknown_words,
+            round(100*percent_unknown_words, 2)
         ))
         return result
 
+    def __create_lengths(self, text):
+        '''Create a data frame of the sentence lengths from a text'''
+        lengths = []
+        for sentence in text:
+            lengths.append(len(sentence))
+        return pd.DataFrame(lengths, columns=['counts'])
+
+    def __sort_summaries(self):
+        pass
 
     def say(self, message, end="\n"):
         if self.in_verbose_mode is True:
