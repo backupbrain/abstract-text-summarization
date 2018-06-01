@@ -191,21 +191,21 @@ class KerasWordVectorizer:
         return pd.DataFrame(lengths, columns=['counts'])
 
     def __get_text_lengths(self, text):
-        self.say("    Counting words... ", "")
+        #self.say("    Counting words... ", "")
         num_words = []
         for row in text:
             num_words.append(len(row))
-        self.say("done")
+        #self.say("done")
         return num_words
 
-    def __count_unknown_words(self, word_vectors):
+    def __get_num_unknown_words(self, word_vectors):
         '''Counts the number of time UNK appears in a sentence.'''
-        self.say("   Counting unknown words... ", "")
+        #self.say("   Counting unknown words... ", "")
         num_unknown_words = 0
         for word in word_vectors:
             if word == self.words_to_ids["<UNK>"]:
                 num_unknown_words += 1
-        self.say("done")
+        #self.say("done")
         return num_unknown_words
 
     def __sort_summaries(self, summaries_word_vectors, reviews_word_vectors):
@@ -214,6 +214,12 @@ class KerasWordVectorizer:
         sorted_review_vectors = []
 
         reviews_lengths = self.__get_text_lengths(summaries_word_vectors)
+        num_unknown_summary_words = self.__get_unknown_words(
+            review_word_vectors
+        )
+        num_unknown_review_words = self.__get_unknown_words(
+            summary_word_vectors
+        )
 
         for length in range(
             min(reviews_lengths), self.max_review_length
@@ -227,9 +233,9 @@ class KerasWordVectorizer:
                 if (num_summary_word_vectors >= self.min_summary_length and
                         num_summary_word_vectors <= self.max_summary_length and
                         num_review_word_vectors >= self.min_review_length and
-                        self.__count_unknown_words(summary_word_vectors) <=
+                        num_unknown_summary_words <=
                         self.min_unknown_summary_words and
-                        self.__count_unknown_words(review_word_vectors) <=
+                        num_unknown_review_words) <=
                         self.min_unknown_review_words and
                         length == num_review_word_vectors):
                     sorted_summary_vectors.append(summary_word_vectors)
