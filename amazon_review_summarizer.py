@@ -53,14 +53,14 @@ def main():
         in_verbose_mode=command_arguments.verbose
     )
     reviews_summaries = None
-    try:
-        reviews_summaries = summarizer_utilities.load_data_from_csv(
-            command_arguments.reviews_file
-        )
-    except:
-        sys.exit("Error: File '{}' was is not a valid CSV file".format(
-            command_arguments.reviews_file
-        ))
+    #try:
+    reviews_summaries = summarizer_utilities.load_data_from_csv(
+        command_arguments.reviews_file
+    )
+    #except:
+    #    sys.exit("Error: File '{}' was is not a valid CSV file".format(
+    #        command_arguments.reviews_file
+    #    ))
 
     unwanted_headers = [
         'Id',
