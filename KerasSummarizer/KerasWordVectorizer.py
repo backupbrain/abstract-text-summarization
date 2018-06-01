@@ -6,8 +6,8 @@ class KerasWordVectorizer:
     do_print_verbose_header = True
     data = None
     codes = ["<UNK>", "<PAD>", "<EOS>", "<GO>"]
-    words_to_ids = {}
-    ids_to_words = {}
+    words_to_vectors = {}
+    vectors_to_words = {}
     embeddings_index = None
     word_counts = {}
     max_word_usage_count = 20
@@ -59,14 +59,6 @@ class KerasWordVectorizer:
         word_vector_info = self.__convert_words_to_vectors()
         summaries_word_vectors = word_vector_info["summaries"]["word_vectors"]
         reviews_word_vectors = word_vector_info["reviews"]["word_vectors"]
-        '''
-        summaries_lengths = self.__create_lengths_data_frame(
-            summaries_word_vectors
-        )
-        lengths_reviews = self.__create_lengths_data_frame(
-            lengths_summaries
-        )
-        '''
         sorted_reviews_summaries_word_vectors = self.__sort_summaries(
             summaries_word_vectors,
             reviews_word_vectors
@@ -91,31 +83,31 @@ class KerasWordVectorizer:
 
     def __build_word_id_table(self):
         self.say("  Creating word vector table...", "")
-        self.words_to_ids = {}
-        self.ids_to_words = {}
+        self.words_to_vectors = {}
+        self.vectors_to_words = {}
         value = 0
         for word, count in self.word_counts.items():
             if count >= self.max_word_usage_count or \
                     word in self.embeddings_index:
-                self.words_to_ids[word] = value
+                self.words_to_vectors[word] = value
                 value += 1
         for code in self.codes:
-            self.words_to_ids[code] = len(self.words_to_ids)
+            self.words_to_vectors[code] = len(self.words_to_vectors)
 
-        for word, id in self.words_to_ids.items():
-            self.ids_to_words[id] = word
-        self.say("done. Found {:,} words".format(len(self.ids_to_words)))
+        for word, id in self.words_to_vectors.items():
+            self.vectors_to_words[id] = word
+        self.say("done. Found {:,} words".format(len(self.vectors_to_words)))
 
     def __build_word_embedding_matrix(self):
         self.say("  Creating word embedding matrix...", "")
-        num_words = len(self.words_to_ids)
+        num_words = len(self.words_to_vectors)
 
         # Create matrix with default values of zeroo
         word_embedding_matrix = np.zeros(
             (num_words, self.max_embedding_matrix_size),
             dtype=np.float32
         )
-        for word, id in self.words_to_ids.items():
+        for word, id in self.words_to_vectors.items():
             if word in self.embeddings_index:
                 word_embedding_matrix[id] = self.embeddings_index[word]
             else:
@@ -148,22 +140,22 @@ class KerasWordVectorizer:
             summary_word_vectors = []
             for word in row["summary"].split():
                 summaries_num_words += 1
-                if word in self.words_to_ids:
-                    summary_word_vectors.append(self.words_to_ids[word])
+                if word in self.words_to_vectors:
+                    summary_word_vectors.append(self.words_to_vectors[word])
                 else:
-                    summary_word_vectors.append(self.words_to_ids["<UNK>"])
+                    summary_word_vectors.append(self.words_to_vectors["<UNK>"])
                     summaries_num_unknown_words += 1
                 summaries_word_vectors.append(summary_word_vectors)
 
             review_word_vectors = []
             for word in row["review"].split():
                 reviews_num_words += 1
-                if word in self.words_to_ids:
-                    review_word_vectors.append(self.words_to_ids[word])
+                if word in self.words_to_vectors:
+                    review_word_vectors.append(self.words_to_vectors[word])
                 else:
-                    review_word_vectors.append(self.words_to_ids["<UNK>"])
+                    review_word_vectors.append(self.words_to_vectors["<UNK>"])
                     reviews_num_unknown_words += 1
-                review_word_vectors.append(self.words_to_ids["<EOS>"])
+                review_word_vectors.append(self.words_to_vectors["<EOS>"])
                 reviews_word_vectors.append(review_word_vectors)
         result = {
             "summaries": {
@@ -200,7 +192,7 @@ class KerasWordVectorizer:
         self.say("   Counting unknown words... ", "")
         num_unknown_words = 0
         for word in word_vectors:
-            if word == self.words_to_ids["<UNK>"]:
+            if word == self.words_to_vectors["<UNK>"]:
                 num_unknown_words += 1
         self.say("done")
         return num_unknown_words
