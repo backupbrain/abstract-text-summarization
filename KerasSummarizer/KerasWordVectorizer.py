@@ -61,12 +61,12 @@ class KerasWordVectorizer:
         for branch in reviews_summaries:
             for row in branch:
                 for word in row.split():
-                    if word not in self.word_counts:
-                        self.word_counts[word] = 1
+                    if word not in word_counts:
+                        word_counts[word] = 1
                     else:
-                        self.word_counts[word] += 1
-                    if self.word_counts[word] > largest_word_count:
-                        largest_word_count = self.word_counts[word]
+                        word_counts[word] += 1
+                    if word_counts[word] > largest_word_count:
+                        largest_word_count = word_counts[word]
         self.say("done. Max {:,}.".format(largest_word_count))
         return word_counts
 
