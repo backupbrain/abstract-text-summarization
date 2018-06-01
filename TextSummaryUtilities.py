@@ -6,6 +6,7 @@ from nltk_english_contractions import contraction_list
 
 class TextSummaryUtilities:
     in_verbose_mode = False
+    do_print_verbose_header = True
 
     def __init__(self, in_verbose_mode=False):
         self.in_verbose_mode = in_verbose_mode
