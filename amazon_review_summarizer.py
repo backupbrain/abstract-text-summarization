@@ -82,7 +82,7 @@ def main():
     cleaned_review_summaries = []
     for row in range(1, len(summaries)):
         cleaned_review_summaries.append({
-            'summary': summaries[row]
+            'summary': summaries[row],
             'review': review[row]
         })
 
