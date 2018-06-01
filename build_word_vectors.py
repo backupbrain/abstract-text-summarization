@@ -26,6 +26,11 @@ def build_command_parser():
         description='Retrieves data from a Google Maps search'
     )
     parser.add_argument(
+        'embeddings_file',
+        help='Load word embeddings file, eg. ConceptNet Numberbach, '
+             'GloVe, or Gigaword'
+    )
+    parser.add_argument(
         'reviews_file',
         help='Load the amazon reviews CSV file, available on kaggle.com'
     )
@@ -93,6 +98,7 @@ def main():
     )
 
     summarizer = KerasWordVectorizer(
+        embeddings_file=command_arguments.embeddings_file,
         in_verbose_mode=command_arguments.verbose
     )
     sorted_reviews_summaries_word_vectors = \
