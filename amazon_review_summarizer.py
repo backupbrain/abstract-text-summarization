@@ -27,12 +27,19 @@ def build_command_parser():
         description='Retrieves data from a Google Maps search'
     )
     parser.add_argument(
+        'embeddings_file',
+        help='Load word embeddings file, eg. ConceptNet Numberbach, ' \
+            'GloVe, or Gigaword'
+    )
+    parser.add_argument(
         'reviews_file',
-        help='Load the amazon reviews CSV file, available on kaggle.com')
+        help='Load the amazon reviews CSV file, available on kaggle.com'
+    )
     parser.add_argument(
         '--verbose',
         action='store_true',
-        help='Print debugging messages')
+        help='Print debugging messages'
+    )
 
     return parser
 

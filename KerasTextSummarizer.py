@@ -93,6 +93,6 @@ class KerasTextSummarizer:
                 word_embedding_matrix[id] = new_embedding
         self.say("done")
 
-    def say(self, message, end=None):
+    def say(self, message, end="\n"):
         if self.in_verbose_mode is True:
             print("[{}]: {}".format(self.__class__.__name__, message), end)
