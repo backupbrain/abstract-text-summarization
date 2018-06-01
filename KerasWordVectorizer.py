@@ -233,10 +233,8 @@ class KerasWordVectorizer:
                 if (num_summary_word_vectors >= self.min_summary_length and
                         num_summary_word_vectors <= self.max_summary_length and
                         num_review_word_vectors >= self.min_review_length and
-                        num_unknown_summary_words <=
-                        self.min_unknown_summary_words and
-                        num_unknown_review_words <=
-                        self.min_unknown_review_words and
+                        num_unknown_summary_words <= self.min_unknown_summary_words and
+                        num_unknown_review_words <= self.min_unknown_review_words and
                         length == num_review_word_vectors):
                     sorted_summary_vectors.append(summary_word_vectors)
                     sorted_review_vectors.append(review_word_vectors)
