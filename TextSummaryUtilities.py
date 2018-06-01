@@ -83,7 +83,6 @@ class TextSummaryUtilities:
                 'summary': summaries[row],
                 'review': reviews[row]
             })
-        self.say("", "")
         self.say("done")
         return cleaned_reviews_summaries
 
