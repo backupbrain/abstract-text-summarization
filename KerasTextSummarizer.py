@@ -56,9 +56,7 @@ class KerasTextSummarizer:
                         self.word_counts[word] += 1
                     if self.word_counts[word] > largest_word_count:
                         largest_word_count = self.word_counts[word]
-        self.say("done. Max {} occurences.".format(
-            len(largest_word_count)
-        ))
+        self.say("done. Max {} occurences.".format(largest_word_count))
 
     def __build_word_id_table(self):
         self.say("  Creating word vector table...", "")
