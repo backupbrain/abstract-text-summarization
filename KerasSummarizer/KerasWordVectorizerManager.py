@@ -68,7 +68,7 @@ class KerasWordVectorizerManager:
         save_file = gzip.open(filename, 'wb')
         pickle.dump(word_vectors, save_file)
         save_file.close()
-        self.say("done".format(filename))
+        self.say("done")
 
     def test_file(self, filename, mode='r'):
         try:

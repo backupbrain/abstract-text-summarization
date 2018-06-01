@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-import pickle
-import gzip
-
+from KerasSummarizer.KerasReviewSummarizer import KerasReviewSummarizer
 
 def build_command_parser():
     parser = argparse.ArgumentParser(
@@ -13,8 +11,12 @@ def build_command_parser():
              'GloVe, or Gigaword'
     )
     parser.add_argument(
-        'vectors_file',
+        'word_vectors_file',
         help='Load the vectorized reviews, created with build_word_vectors.py'
+    )
+    parser.add_argument(
+        'words_to_vectors_file',
+        help='Load the word/vector lookup data, created with build_word_vectors.py'
     )
     parser.add_argument(
         '--verbose',
@@ -29,20 +31,24 @@ def main():
     command_parser = build_command_parser()
     command_arguments = command_parser.parse_args()
 
+
+    summarizer_manager = KerasReviewSummarizerManager(
+        command_arguments.verbose
+    )
+
     try:
-        with open(command_arguments.vectors_file, 'r') as f:
-            f.close()
-    except:
-        sys.exit("Error: File '{}' was not readable".format(
-            command_arguments.embeddings_file
-        ))
-    try:
-        with open(command_arguments.vectors_file, 'r') as f:
-            f.close()
-    except:
-        sys.exit("Error: File '{}' was not readable".format(
-            command_arguments.reviews_file
-        ))
+        word_vectors = summarizer_manager.load_data_from_file(
+            command_arguments.word_vectors_file
+        )
+        words_to_vectors = summarizer_manager.load_data_from_file(
+            command_arguments.words_to_vectors_file
+        )
+        summarizer_manager.save_vectors_to_file(
+            sorted_reviews_summaries_word_vectors,
+            command_arguments.save_file
+        )
+    except Exception as e:
+        sys.exit("Error: {}".format(str(e)))
 
 
 if __name__ == "__main__":

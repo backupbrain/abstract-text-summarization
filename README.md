@@ -6,6 +6,10 @@ Using Keras, Tensorflow, Python, NLTK, and Numberbatch
 
 This program learns how to write summaries from Amazon reviews using Deep Learning. It then writes it's own natural language summaries from any new review.
 
+It is created in an MVC framework so that implementation in other projects is easier.
+
+Inspired by [Currie32's Text-Summarization-with-Amazon-Reviews](https://github.com/Currie32/Text-Summarization-with-Amazon-Reviews/blob/master/summarize_reviews.py)
+
 ## Setup
 
 ### Setup Python
@@ -23,6 +27,10 @@ This program relies on a specific data set, a set of [~500,000 Amazon Fine Food 
 
 ### Get Word Embeddings / Semantic Vector Library
 
+This project relies on existing trained word-word co-occurrence data. These trained data libraries learn the relationships between words, based on millions of human-written texts. 
+
+### Option 1: ConceptNet Numberbatch
+
 Download the [ConceptNet Numberbatch](https://github.com/commonsense/) semantic vector library. This is necessary for determining what words act as synonyms, etc.
 
 ```
@@ -30,7 +38,22 @@ $ wget http://conceptnet.s3.amazonaws.com/downloads/2017/numberbatch/numberbatch
 $ gunzip numberbatch-en-17.02.txt.gz
 ```
 
-To speed up processing later, create a ramdisk
+### Option 2: Global Vectors for Word Representation (GloVe)
+
+Download [GloVe](https://nlp.stanford.edu/projects/glove/)
+
+```
+$ wget https://nlp.stanford.edu/software/GloVe-1.2.zip
+$ unzip GloVe-1.2.zip
+```
+
+### Option 3: Gigiword
+
+### Speed tip
+
+These files are large, around 1 Gb. Loading them into a Python script from disk can take 10-20 seconds. They load faster from a ramdisk.
+
+It is possible to move them to a ramdisk like this:
 
 ```
 $ sudo mkdir /mnt/numberbatchramdisk
