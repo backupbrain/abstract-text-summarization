@@ -9,6 +9,7 @@ class KerasWordVectorizer:
     MAX_EMBEDDING_MATRIX_SIZE = 300
     MAX_REVIEW_LENGTH = 84
     MIN_SUMMARY_LENGTH = 2
+    MAX_SUMMARY_LENGTH = 13
     MIN_REVIEW_LENGTH = 2
     MIN_UNKNOWN_SUMMARY_WORDS = 0
     MIN_UNKNOWN_REVIEW_WORDS = 1
@@ -221,7 +222,7 @@ class KerasWordVectorizer:
                 num_review_word_vectors = len(review_word_vectors)
 
                 if (num_summary_word_vectors >= self.MIN_SUMMARY_LENGTH and
-                        num_summary_word_vectors <= self.max_summary_length and
+                        num_summary_word_vectors <= self.MAX_SUMMARY_LENGTH and
                         num_review_word_vectors >= self.MIN_REVIEW_LENGTH and
                         num_unknown_summary_words <= self.MIN_UNKNOWN_SUMMARY_WORDS and
                         num_unknown_review_words <= self.MIN_UNKNOWN_REVIEW_WORDS and
