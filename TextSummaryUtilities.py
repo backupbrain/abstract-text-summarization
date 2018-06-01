@@ -80,4 +80,4 @@ class TextSummaryUtilities:
 
     def say(self, message, end="\n"):
         if self.in_verbose_mode is True:
-            print("[{}]: {}".format(self.__class__.__name__, message), end)
+            print("[{}]: {}".format(self.__class__.__name__, message), end=end)
