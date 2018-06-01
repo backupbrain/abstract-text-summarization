@@ -32,7 +32,7 @@ class KerasWordVectorizerManager:
                 reviews_filename
             )
         except:
-            raise Exception("Error: File '{}' was is not CSV".format(
+            raise Exception("File '{}' was is not CSV".format(
                 reviews_filename
             ))
         unwanted_headers = [
@@ -75,7 +75,7 @@ class KerasWordVectorizerManager:
             with open(filename, 'r') as f:
                 f.close()
         except:
-            raise Exception("Error: File '{}' was not readable".format(
+            raise Exception("File '{}' was not readable".format(
                 filename
             ))
 

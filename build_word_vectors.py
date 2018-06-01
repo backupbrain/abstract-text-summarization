@@ -62,7 +62,7 @@ def main():
             command_arguments.save_file
         )
     except Exception as e:
-        sys.exit(str(e))
+        sys.exit("Error: {}".format(str(e)))
 
 
 if __name__ == "__main__":

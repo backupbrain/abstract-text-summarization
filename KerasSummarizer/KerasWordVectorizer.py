@@ -70,7 +70,7 @@ class KerasWordVectorizer:
         self.say("done. Max {:,}.".format(largest_word_count))
         return word_counts
 
-    def __build_word_id_table(self, reviews_summaries_word_counts):
+    def __build_word_vector_table(self, reviews_summaries_word_counts):
         self.say("  Creating word vector table...", "")
         words_to_vectors = {}
         vectors_to_words = {}
