@@ -6,6 +6,7 @@ from tensorflow.python.layers.core import Dense
 
 class KerasTextSummarizer:
     in_verbose_mode = False
+    do_print_verbose_header = True
     data = None
     codes = ["<UNK>", "<PAD>", "<EOS>", "<GO>"]
     word_ids = {}
@@ -96,3 +97,9 @@ class KerasTextSummarizer:
     def say(self, message, end="\n"):
         if self.in_verbose_mode is True:
             print("[{}]: {}".format(self.__class__.__name__, message), end=end)
+        if end != "\n":
+            self.do_print_verbose_header = False
+        else:
+            self.do_print_verbose_header = True
+
+

@@ -1,10 +1,10 @@
 # Abstract Text Summarization
 
-Using Keras, Tensorflow, Python, and Numberbach
+Using Keras, Tensorflow, Python, NLTK, and Numberbach
 
 ## Overview
 
-This program 
+This program learns how to write summaries from Amazon reviews using Deep Learning. It then writes it's own natural language summaries from any new review.
 
 ## Setup
 
@@ -43,5 +43,5 @@ $ sudo cp numberbach-en-17.02.txt /tmp/numberbachramdisk
 
 
 ```
-$ ./amazon_review_summarizer.py Reviews.csv --verbose
+$ ./amazon_review_summarizer.py /mnt/numberbachramdisk/numberbach-en-17.02.txt Reviews.csv --verbose
 ```
