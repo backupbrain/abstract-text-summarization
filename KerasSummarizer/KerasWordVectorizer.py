@@ -74,7 +74,7 @@ class KerasWordVectorizer:
         return word_counts
 
     def __build_word_vector_table(self, reviews_summaries_word_counts):
-        self.say("  Creating word vector table...", "")
+        self.say("  Creating word vector table... ", "")
         words_to_vectors = {}
         vectors_to_words = {}
         vector = 0
@@ -92,7 +92,7 @@ class KerasWordVectorizer:
         return words_to_vectors, vectors_to_words
 
     def __build_word_embedding_matrix(self, words_to_vectors):
-        self.say("  Creating word embedding matrix...", "")
+        self.say("  Creating word embedding matrix... ", "")
         num_words = len(words_to_vectors)
 
         # Create matrix with default values of zeroo
@@ -114,7 +114,7 @@ class KerasWordVectorizer:
                 )
                 self.embeddings_index[word] = new_embedding
                 word_embedding_matrix[id] = new_embedding
-        self.say("Done")
+        self.say("done")
 
     def __convert_words_to_vectors(self, words_to_vectors, reviews_summaries):
         '''Convert words in text to an integer.
@@ -180,12 +180,12 @@ class KerasWordVectorizer:
         self.say("done")
         return num_words
 
-    def __get_num_unknown_words(self, word_vectors):
+    def __get_num_unknown_words(self, words_to_vectors):
         '''Counts the number of time UNK appears in a sentence.'''
         self.say("   Counting unknown words... ", "")
         num_unknown_words = 0
         for word in word_vectors:
-            if word == self.words_to_vectors["<UNK>"]:
+            if word == words_to_vectors["<UNK>"]:
                 num_unknown_words += 1
         self.say("done")
         return num_unknown_words
