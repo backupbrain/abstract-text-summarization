@@ -66,7 +66,7 @@ class KerasTextSummarizer:
 
         for word, id in self.word_ids.items():
             self.id_words[id] = word
-        self.say("done. Found {} words".format(str(self.id_words)))
+        self.say("done. Found {} words".format(len(self.id_words)))
 
     def __build_word_embedding_matrix(self):
         self.say("  Creating word embedding matrix...", "")
