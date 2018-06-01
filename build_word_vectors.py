@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
 import argparse
 import sys
-from KerasWordVectorizer import KerasWordVectorizer
-from TextSummaryUtilities import TextSummaryUtilities
-import pickle
-import gzip
+from KerasSummarizer.KerasWordVectorizerManager import \
+    KerasWordVectorizerManager
 
 
 # from tensorflow.ops.rnn_cell_impl import _zero_state_tensors
@@ -51,66 +49,18 @@ def main():
     command_parser = build_command_parser()
     command_arguments = command_parser.parse_args()
 
-    try:
-        with open(command_arguments.reviews_file, 'r') as f:
-            f.close()
-    except:
-        sys.exit("Error: File '{}' was not readable".format(
-            command_arguments.reviews_file
-        ))
-    try:
-        with open(command_arguments.save_file, 'wb') as f:
-            f.close()
-    except:
-        sys.exit("Error: File '{}' was not writable".format(
-            command_arguments.save_file
-        ))
+    vectorizor_manager = KerasWordVectorizerManager(command_arguments.verbose)
 
-    summarizer_utilities = TextSummaryUtilities(
-        in_verbose_mode=command_arguments.verbose
-    )
-    reviews_summaries = None
     try:
-        reviews_summaries = summarizer_utilities.load_data_from_csv(
+        vectorizor_manager.build_word_vectors(
+            command_arguments.embeddings_file,
             command_arguments.reviews_file
         )
-    except:
-        sys.exit("Error: File '{}' was is not a valid CSV file".format(
-            command_arguments.reviews_file
-        ))
-
-    unwanted_headers = [
-        'Id',
-        'ProductId',
-        'UserId',
-        'ProfileName',
-        'HelpfulnessNumerator',
-        'HelpfulnessDenominator',
-        'Score',
-        'Time'
-    ]
-    reviews_summaries = summarizer_utilities.drop_unwanted_columns(
-        reviews_summaries,
-        unwanted_headers
-    )
-    cleaned_reviews_summaries = summarizer_utilities.clean_reviews_summaries(
-        reviews_summaries
-    )
-
-    summarizer = KerasWordVectorizer(
-        embeddings_index_filename=command_arguments.embeddings_file,
-        in_verbose_mode=command_arguments.verbose
-    )
-    sorted_reviews_summaries_word_vectors = \
-        summarizer.load_vectors_from_data_pairs(cleaned_reviews_summaries)
-
-    save_file = gzip.open(command_arguments.save_file, 'wb')
-    pickle.dump(sorted_reviews_summaries_word_vectors, save_file)
-    save_file.close()
-    if command_arguments.verbose is True:
-        print("Word vectors saved into '{}'".format(
+        vectorizor_manager.save_vectors_to_file(
             command_arguments.save_file
-        ))
+        )
+    except Exception as e:
+        sys.exit(str(e))
 
 
 if __name__ == "__main__":

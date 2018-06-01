@@ -1,7 +1,7 @@
 import pandas as pd
 import re
 from nltk.corpus import stopwords
-from nltk_english_contractions import contraction_list
+from .nltk_english_contractions import contraction_list
 
 
 class TextSummaryUtilities:
