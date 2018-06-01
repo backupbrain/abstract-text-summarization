@@ -6,6 +6,7 @@ import gzip
 
 class KerasWordVectorizerManager:
     in_verbose_mode = False
+    do_print_verbose_header = True
 
     def __init__(
         self,
