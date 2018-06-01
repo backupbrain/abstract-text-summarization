@@ -1,6 +1,6 @@
 # Abstract Text Summarization
 
-Using Keras, Tensorflow, Python, NLTK, and Numberbach
+Using Keras, Tensorflow, Python, NLTK, and Numberbatch
 
 ## Overview
 
@@ -23,19 +23,19 @@ This program relies on a specific data set, a set of [~500,000 Amazon Fine Food 
 
 ### Get Word Embeddings / Semantic Vector Library
 
-Download the [ConceptNet Numberbach](https://github.com/commonsense/) semantic vector library. This is necessary for determining what words act as synonyms, etc.
+Download the [ConceptNet Numberbatch](https://github.com/commonsense/) semantic vector library. This is necessary for determining what words act as synonyms, etc.
 
 ```
 $ wget http://conceptnet.s3.amazonaws.com/downloads/2017/numberbatch/numberbatch-en-17.02.txt.gz
-$ gunzip numberbach-en-17.02.txt.gz
+$ gunzip numberbatch-en-17.02.txt.gz
 ```
 
 To speed up processing later, create a ramdisk
 
 ```
-$ sudo mkdir /mnt/numberbachramdisk
-$ sudo mount -t tmpfs -o size=1331M tmpfs /mnt/numberbachramdisk
-$ sudo cp numberbach-en-17.02.txt /tmp/numberbachramdisk
+$ sudo mkdir /mnt/numberbatchramdisk
+$ sudo mount -t tmpfs -o size=1331M tmpfs /mnt/numberbatchramdisk
+$ sudo cp numberbatch-en-17.02.txt /tmp/numberbatchramdisk
 ```
 
 ## Running
@@ -49,5 +49,5 @@ $./build_word_vectors.py Reviews.csv wordvectors.pklz --verbose
 The next step is to train the machine learning model.
 
 ```
-$ ./summarizer.py /mnt/numberbachramdisk/numberbach-en-17.02.txt wordvectors.pklz --verbose
+$ ./summarizer.py /mnt/numberbatchramdisk/numberbatch-en-17.02.txt wordvectors.pklz --verbose
 ```

@@ -98,7 +98,7 @@ def main():
     )
 
     summarizer = KerasWordVectorizer(
-        embeddings_file=command_arguments.embeddings_file,
+        embeddings_index_filename=command_arguments.embeddings_file,
         in_verbose_mode=command_arguments.verbose
     )
     sorted_reviews_summaries_word_vectors = \
