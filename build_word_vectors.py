@@ -52,11 +52,13 @@ def main():
     vectorizor_manager = KerasWordVectorizerManager(command_arguments.verbose)
 
     try:
-        vectorizor_manager.build_word_vectors(
-            command_arguments.embeddings_file,
-            command_arguments.reviews_file
-        )
+        sorted_reviews_summaries_word_vectors = \
+            vectorizor_manager.build_word_vectors(
+                command_arguments.embeddings_file,
+                command_arguments.reviews_file
+            )
         vectorizor_manager.save_vectors_to_file(
+            sorted_reviews_summaries_word_vectors,
             command_arguments.save_file
         )
     except Exception as e:
