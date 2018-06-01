@@ -3,6 +3,7 @@ import tensorflow as tensorflow
 import time
 from tensorflow.python.layers.core import Dense
 from progressbar import update_progress_bar
+import pandas as pd
 
 
 class KerasTextSummarizer:
