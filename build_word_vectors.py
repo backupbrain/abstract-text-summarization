@@ -18,8 +18,12 @@ def build_command_parser():
         help='Load the amazon reviews CSV file, available on kaggle.com'
     )
     parser.add_argument(
-        'save_file',
+        'vectors_save_file',
         help='Save the vectorized data into a this file'
+    )
+    parser.add_argument(
+        'words_to_vectors_save_file',
+        help='Save the words to vectors lookup table into a this file'
     )
     parser.add_argument(
         '--verbose',
@@ -37,14 +41,18 @@ def main():
     vectorizor_manager = KerasWordVectorizerManager(command_arguments.verbose)
 
     try:
-        sorted_reviews_summaries_word_vectors = \
+        words_to_vectors, sorted_reviews_summaries_word_vectors = \
             vectorizor_manager.build_word_vectors(
                 command_arguments.embeddings_file,
                 command_arguments.reviews_file
             )
-        vectorizor_manager.save_vectors_to_file(
+        vectorizor_manager.save_data_to_file(
             sorted_reviews_summaries_word_vectors,
-            command_arguments.save_file
+            command_arguments.vectors_save_file
+        )
+        vectorizor_manager.save_data_to_file(
+            sorted_reviews_summaries_word_vectors,
+            command_arguments.words_to_vectors_save_file
         )
     except Exception as e:
         sys.exit("Error: {}".format(str(e)))

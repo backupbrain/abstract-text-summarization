@@ -56,7 +56,7 @@ class KerasWordVectorizer:
             words_to_vectors
         )
         self.say("Done loading vectors")
-        return sorted_reviews_summaries_word_vectors
+        return words_to_vectors, sorted_reviews_summaries_word_vectors
 
     def __count_words(self, reviews_summaries):
         '''Count the number of occurrences of each word in a set of text'''

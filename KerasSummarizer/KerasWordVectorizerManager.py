@@ -57,10 +57,10 @@ class KerasWordVectorizerManager:
             embeddings_index_filename=embeddings_filename,
             in_verbose_mode=self.in_verbose_mode
             )
-        sorted_reviews_summaries_word_vectors = \
+        words_to_vectors, sorted_reviews_summaries_word_vectors = \
             summarizer.load_vectors_from_data_pairs(cleaned_reviews_summaries)
         self.say("Done")
-        return sorted_reviews_summaries_word_vectors
+        return words_to_vectors, sorted_reviews_summaries_word_vectors
 
     def save_vectors_to_file(self, word_vectors, filename):
         self.say("Saving vectors to '{}'... ".format(filename), "")
