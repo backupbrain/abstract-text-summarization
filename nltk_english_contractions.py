@@ -124,9 +124,9 @@ contraction_list = {
   "you've": "you have"
 }
 
-c_re = re.compile('(%s)' % '|'.join(cList.keys()))
+c_re = re.compile('(%s)' % '|'.join(contraction_list.keys()))
 
 def expand_contractions(text, c_re=c_re):
     def replace(match):
-        return cList[match.group(0)]
+        return contraction_list[match.group(0)]
     return c_re.sub(replace, text)
