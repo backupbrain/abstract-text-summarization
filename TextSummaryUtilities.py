@@ -11,8 +11,7 @@ class TextSummaryUtilities:
     def __init__(self, in_verbose_mode=False):
         self.in_verbose_mode = in_verbose_mode
         self.say("In verbose mode")
-        self.say("Loading nltk and pandas...","")
-        self.say("done")
+        self.say("Loading nltk and pandas...")
 
     def load_data_from_csv(self, filename):
         self.say("Loading CSV file: '{}'...".format(filename), "")
@@ -86,7 +85,7 @@ class TextSummaryUtilities:
                 'summary': summaries[row],
                 'review': reviews[row]
             })
-        self.say("done")
+        self.say("Done")
         return cleaned_reviews_summaries
 
     def clean_summaries(self, data):
