@@ -4,10 +4,7 @@ import sys
 from KerasWordVectorizer import KerasWordVectorizer
 from TextSummaryUtilities import TextSummaryUtilities
 import pickle
-import zip
-
-# Embeddings Index
-embeddings_index_filename = 'numberbatch-en-17.02.txt'
+import gzip
 
 
 # from tensorflow.ops.rnn_cell_impl import _zero_state_tensors
@@ -27,11 +24,6 @@ def _zero_state_tensors(state_size, batch_size, dtype):
 def build_command_parser():
     parser = argparse.ArgumentParser(
         description='Retrieves data from a Google Maps search'
-    )
-    parser.add_argument(
-        'embeddings_file',
-        help='Load word embeddings file, eg. ConceptNet Numberbach, '
-             'GloVe, or Gigaword'
     )
     parser.add_argument(
         'reviews_file',
@@ -69,7 +61,6 @@ def main():
             command_arguments.save_file
         ))
 
-
     summarizer_utilities = TextSummaryUtilities(
         in_verbose_mode=command_arguments.verbose
     )
@@ -102,7 +93,6 @@ def main():
     )
 
     summarizer = KerasWordVectorizer(
-        embeddings_index_filename=embeddings_index_filename,
         in_verbose_mode=command_arguments.verbose
     )
     sorted_reviews_summaries_word_vectors = \

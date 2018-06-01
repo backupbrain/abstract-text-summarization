@@ -1,5 +1,4 @@
 import numpy as np
-from progressbar import update_progress_bar
 
 
 class KerasWordVectorizer:

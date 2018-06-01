@@ -40,8 +40,14 @@ $ sudo cp numberbach-en-17.02.txt /tmp/numberbachramdisk
 
 ## Running
 
-
+The first step is to convert the Amazon reviews data into word vectors. This only needs to be done once each time there is a new data set.
 
 ```
-$ ./amazon_review_summarizer.py /mnt/numberbachramdisk/numberbach-en-17.02.txt Reviews.csv --verbose
+$./build_word_vectors.py Reviews.csv wordvectors.pklz --verbose
+```
+
+The next step is to train the machine learning model.
+
+```
+$ ./summarizer.py /mnt/numberbachramdisk/numberbach-en-17.02.txt wordvectors.pklz --verbose
 ```
