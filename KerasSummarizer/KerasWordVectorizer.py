@@ -42,7 +42,7 @@ class KerasWordVectorizer:
         reviews_summaries_word_counts = self.__count_words(reviews_summaries)
         words_to_vectors, vectors_to_words = \
             self.__build_word_vector_table(reviews_summaries_word_counts)
-        self.__build_word_embedding_matrix()
+        self.__build_word_embedding_matrix(words_to_vectors)
         word_vector_info = self.__convert_words_to_vectors(reviews_summaries)
         summaries_word_vectors = word_vector_info["summaries"]["word_vectors"]
         reviews_word_vectors = word_vector_info["reviews"]["word_vectors"]
