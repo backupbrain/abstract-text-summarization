@@ -43,7 +43,7 @@ class KerasWordVectorizer:
         words_to_vectors, vectors_to_words = \
             self.__build_word_vector_table(reviews_summaries_word_counts)
         self.__build_word_embedding_matrix()
-        word_vector_info = self.__convert_words_to_vectors()
+        word_vector_info = self.__convert_words_to_vectors(reviews_summaries)
         summaries_word_vectors = word_vector_info["summaries"]["word_vectors"]
         reviews_word_vectors = word_vector_info["reviews"]["word_vectors"]
         sorted_reviews_summaries_word_vectors = self.__sort_summaries(
@@ -58,7 +58,7 @@ class KerasWordVectorizer:
         self.say("  Counting word occurrences... ", "")
         word_counts = {}
         largest_word_count = 0
-        for branch in self.data:
+        for branch in self.reviews_summaries:
             for row in branch:
                 for word in row.split():
                     if word not in self.word_counts:
@@ -113,7 +113,7 @@ class KerasWordVectorizer:
                 word_embedding_matrix[id] = new_embedding
         self.say("Done")
 
-    def __convert_words_to_vectors(self):
+    def __convert_words_to_vectors(self, reviews_summaries):
         '''Convert words in text to an integer.
            If word is not in vocab_to_int, use UNK's integer.
            Total the number of words and UNKs.
@@ -126,7 +126,7 @@ class KerasWordVectorizer:
         summaries_word_vectors = []
         reviews_word_vectors = []
         self.say("  Loading word vectors... ", "")
-        for row in self.data:
+        for row in reviews_summaries:
             summary_word_vectors = []
             for word in row["summary"].split():
                 summaries_num_words += 1
