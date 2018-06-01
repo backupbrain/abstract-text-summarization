@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tensorflow
 import time
 from tensorflow.python.layers.core import Dense
+from progressbar import update_progress_bar
 
 
 class KerasTextSummarizer:
@@ -26,7 +27,18 @@ class KerasTextSummarizer:
         self.say("Loading embeddings file...", "")
         self.embeddings_index = {}
         with open(embeddings_index_filename, encoding='utf-8') as f:
+            line_number = 0
+            num_lines = 0
             for line in f:
+                num_lines += 1
+            for line in f:
+                update_progress_bar(
+                    line_number += 1,
+                    num_lines,
+                    prefix = 'Progress:',
+                    suffix = 'Done',
+                    length = 50
+                )
                 values = line.split(' ')
                 word = values[0]
                 embedding = np.asarray(values[1:], dtype='float32')
