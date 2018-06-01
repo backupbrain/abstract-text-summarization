@@ -39,7 +39,7 @@ class KerasWordVectorizer:
         self.say("done")
 
     def load_vectors_from_data_pairs(self, reviews_summaries):
-        self.say("Loading data...")
+        self.say("Loading vectors from data pairs...")
         reviews_summaries_word_counts = self.__count_words(reviews_summaries)
         words_to_vectors, vectors_to_words = \
             self.__build_word_vector_table(reviews_summaries_word_counts)
@@ -55,7 +55,7 @@ class KerasWordVectorizer:
             reviews_word_vectors,
             words_to_vectors
         )
-        self.say("Done loading data")
+        self.say("Done loading vectors")
         return sorted_reviews_summaries_word_vectors
 
     def __count_words(self, reviews_summaries):
