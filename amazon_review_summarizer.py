@@ -49,7 +49,9 @@ def main():
             command_arguments.reviews_file
         ))
 
-    summarizer_utilities = TextSummaryUtilities()
+    summarizer_utilities = TextSummaryUtilities(
+        in_verbose_mode=command_arguments.verbose
+    )
     reviews_summaries = None
     try:
         reviews_summaries = summarizer_utilities.load_data_from_csv(
@@ -90,7 +92,8 @@ def main():
         })
 
     summarizer = KerasTextSummarizer(
-        embeddings_index_filename=embeddings_index_filename
+        embeddings_index_filename=embeddings_index_filename,
+        in_verbose_mode=command_arguments.verbose
     )
     summarizer.load_data(cleaned_review_summaries)
 
