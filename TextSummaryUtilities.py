@@ -78,6 +78,6 @@ class TextSummaryUtilities:
             clean_texts.append(self.clean_text(text))
         print("Texts are complete.")
 
-    def say(self, message):
+    def say(self, message, end=None):
         if self.in_verbose_mode is True:
-            print("[{}]: {}".format(self.__class__.__name__, message))
+            print("[{}]: {}".format(self.__class__.__name__, message), end)
