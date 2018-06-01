@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import sys
-from KerasTextSummarizer import KerasTextSummarizer
+from KerasWordVectorizer import KerasWordVectorizer
 from TextSummaryUtilities import TextSummaryUtilities
 
 # Embeddings Index
@@ -87,11 +87,11 @@ def main():
         reviews_summaries
     )
 
-    summarizer = KerasTextSummarizer(
+    summarizer = KerasWordVectorizer(
         embeddings_index_filename=embeddings_index_filename,
         in_verbose_mode=command_arguments.verbose
     )
-    summarizer.load_data(cleaned_reviews_summaries)
+    summarizer.load_vectors_from_data_pairs(cleaned_reviews_summaries)
 
 
 if __name__ == "__main__":

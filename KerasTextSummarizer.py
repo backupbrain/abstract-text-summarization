@@ -6,7 +6,7 @@ from progressbar import update_progress_bar
 import pandas as pd
 
 
-class KerasTextSummarizer:
+class KerasWordVectorizer:
     in_verbose_mode = False
     do_print_verbose_header = True
     data = None
@@ -17,6 +17,11 @@ class KerasTextSummarizer:
     word_counts = {}
     max_word_usage_count = 20
     max_embedding_matrix_size = 300
+    max_review_length = 84
+    min_summary_length = 2
+    min_review_length = 2
+    min_unknown_summary_words = 0
+    min_unknown_review_words = 1
 
     sorted_summaries = []
     sorted_texts = []
@@ -44,7 +49,7 @@ class KerasTextSummarizer:
                 self.embeddings_index[word] = embedding
         self.say("done")
 
-    def load_data(self, data):
+    def load_vectors_from_data_pairs(self, data):
         self.say("Loading data...")
         self.data = data
         self.word_counts = {}
@@ -54,9 +59,15 @@ class KerasTextSummarizer:
         word_vector_info = self.__convert_words_to_vectors()
         summaries_word_vectors = word_vector_info["summaries"]["word_vectors"]
         reviews_word_vectors = word_vector_info["reviews"]["word_vectors"]
-        lengths_summaries = self.__create_lengths(summaries_word_vectors)
-        lengths_reviews = self.__create_lengths(lengths_summaries)
-        self.__sort_summaries()
+        '''
+        summaries_lengths = self.__create_lengths_data_frame(
+            summaries_word_vectors
+        )
+        lengths_reviews = self.__create_lengths_data_frame(
+            lengths_summaries
+        )
+        '''
+        self.__sort_summaries(summaries_word_vectors, reviews_word_vectors)
         self.say("Done loading data")
 
     def __count_words(self):
@@ -172,15 +183,64 @@ class KerasTextSummarizer:
         ))
         return result
 
-    def __create_lengths(self, text):
+    def __create_lengths_data_frame(self, text):
         '''Create a data frame of the sentence lengths from a text'''
         lengths = []
         for sentence in text:
             lengths.append(len(sentence))
         return pd.DataFrame(lengths, columns=['counts'])
 
-    def __sort_summaries(self):
-        pass
+    def __get_text_lengths(self, text):
+        self.say("    Counting words... ", "")
+        num_words = []
+        for row in text:
+            num_words.append(len(row))
+        self.say("done")
+        return num_words
+
+    def __count_unknown_words(self, word_vectors):
+        '''Counts the number of time UNK appears in a sentence.'''
+        self.say("   Counting unknown words... ", "")
+        num_unknown_words = 0
+        for word in word_vectors:
+            if word == self.words_to_ids["<UNK>"]:
+                num_unknown_words += 1
+        self.say("done")
+        return num_unknown_words
+
+    def __sort_summaries(self, summaries_word_vectors, reviews_word_vectors):
+        self.say("  Sorting summaries... ", "")
+        sorted_summary_vectors = []
+        sorted_review_vectors = []
+
+        reviews_lengths = self.__get_text_lengths(summaries_word_vectors)
+
+        for length in range(
+            min(reviews_lengths), self.max_review_length
+        ):
+            for count, words in enumerate(summaries_word_vectors):
+                summary_word_vectors = summaries_word_vectors[count]
+                review_word_vectors = reviews_word_vectors[count]
+                num_summary_word_vectors = len(summary_word_vectors)
+                num_review_word_vectors = len(review_word_vectors)
+
+                if (num_summary_word_vectors >= self.min_summary_length and
+                        num_summary_word_vectors <= self.max_summary_length and
+                        num_review_word_vectors >= self.min_review_length and
+                        self.__count_unknown_words(summary_word_vectors) <=
+                        self.min_unknown_summary_words and
+                        self.__count_unknown_words(review_word_vectors) <=
+                        self.min_unknown_review_words and
+                        length == num_review_word_vectors):
+                    sorted_summary_vectors.append(summary_word_vectors)
+                    sorted_review_vectors.append(review_word_vectors)
+
+        result = {
+            "summaries": sorted_summary_vectors,
+            "reviews": sorted_review_vectors
+        }
+        self.say("done")
+        return result
 
     def say(self, message, end="\n"):
         if self.in_verbose_mode is True:
