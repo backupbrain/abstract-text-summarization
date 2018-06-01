@@ -51,7 +51,8 @@ class KerasWordVectorizer:
         reviews_word_vectors = word_vector_info["reviews"]["word_vectors"]
         sorted_reviews_summaries_word_vectors = self.__sort_summaries(
             summaries_word_vectors,
-            reviews_word_vectors
+            reviews_word_vectors,
+            words_to_vectors
         )
         self.say("Done loading data")
         return sorted_reviews_summaries_word_vectors
@@ -180,27 +181,33 @@ class KerasWordVectorizer:
         self.say("done")
         return num_words
 
-    def __get_num_unknown_words(self, words_to_vectors):
+    def __get_num_unknown_words(self, word_vectors, words_to_vectors):
         '''Counts the number of time UNK appears in a sentence.'''
         self.say("    Counting unknown words... ", "")
         num_unknown_words = 0
-        for word in words_to_vectors:
+        for word in word_vectors:
             if word == words_to_vectors["<UNK>"]:
                 num_unknown_words += 1
         self.say("done")
         return num_unknown_words
 
-    def __sort_summaries(self, summaries_word_vectors, reviews_word_vectors):
+    def __sort_summaries(self,
+        summaries_word_vectors,
+        reviews_word_vectors,
+        words_to_vectors
+    ):
         self.say("  Sorting summaries... ")
         sorted_summary_vectors = []
         sorted_review_vectors = []
 
         reviews_lengths = self.__get_text_lengths(summaries_word_vectors)
         num_unknown_summary_words = self.__get_num_unknown_words(
-            reviews_word_vectors
+            reviews_word_vectors,
+            words_to_vectors
         )
         num_unknown_review_words = self.__get_num_unknown_words(
-            summaries_word_vectors
+            summaries_word_vectors,
+            words_to_vectors
         )
 
         self.say("  Sorting... ", "")
