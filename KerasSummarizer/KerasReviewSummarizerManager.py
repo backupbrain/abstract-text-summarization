@@ -29,7 +29,8 @@ class KerasReviewSummarizerManager:
         )
         self.say("Done")
 
-    def build_model(self)
+    def build_model(self):
+        self.keras_summarizer.build_graph()
 
     def load_data_from_file(self, filename):
         self.say("Reading data from '{}'... ".format(filename), "")
