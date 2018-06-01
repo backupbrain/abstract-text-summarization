@@ -63,6 +63,29 @@ class TextSummaryUtilities:
 
         return text
 
+    def clean_reviews_summaries(self, raw_summaries):
+        self.say("Cleaning reviews and summaries...")
+        self.say("  Cleaning summaries... ", "")
+        summaries = [
+            self.clean_text(summary, remove_stopwords=False)
+            for summary in raw_summaries.Summary
+        ]
+        self.say("done")
+        self.say("  Cleaning reviews... ", "")
+        reviews = [
+            self.clean_text(review, remove_stopwords=False)
+            for review in raw_summaries.Text
+        ]
+        self.say("done")
+        cleaned_reviews_summaries = []
+        for row in range(1, len(summaries)):
+            cleaned_reviews_summaries.append({
+                'summary': summaries[row],
+                'review': reviews[row]
+            })
+        self.say("done")
+        return cleaned_reviews_summaries
+
     def clean_summaries(self, data):
         # Clean the summaries and texts
         clean_summaries = []

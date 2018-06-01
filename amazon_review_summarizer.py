@@ -28,8 +28,8 @@ def build_command_parser():
     )
     parser.add_argument(
         'embeddings_file',
-        help='Load word embeddings file, eg. ConceptNet Numberbach, ' \
-            'GloVe, or Gigaword'
+        help='Load word embeddings file, eg. ConceptNet Numberbach, '
+             'GloVe, or Gigaword'
     )
     parser.add_argument(
         'reviews_file',
@@ -60,14 +60,14 @@ def main():
         in_verbose_mode=command_arguments.verbose
     )
     reviews_summaries = None
-    #try:
-    reviews_summaries = summarizer_utilities.load_data_from_csv(
-        command_arguments.reviews_file
-    )
-    #except:
-    #    sys.exit("Error: File '{}' was is not a valid CSV file".format(
-    #        command_arguments.reviews_file
-    #    ))
+    try:
+        reviews_summaries = summarizer_utilities.load_data_from_csv(
+            command_arguments.reviews_file
+        )
+    except:
+        sys.exit("Error: File '{}' was is not a valid CSV file".format(
+            command_arguments.reviews_file
+        ))
 
     unwanted_headers = [
         'Id',
@@ -83,7 +83,7 @@ def main():
         reviews_summaries,
         unwanted_headers
     )
-    cleaned_reviews_summaries = summarizer_utilities.clean_summaries(
+    cleaned_reviews_summaries = summarizer_utilities.clean_reviews_summaries(
         reviews_summaries
     )
 
