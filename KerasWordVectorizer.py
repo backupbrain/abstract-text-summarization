@@ -67,7 +67,10 @@ class KerasWordVectorizer:
             lengths_summaries
         )
         '''
-        self.__sort_summaries(summaries_word_vectors, reviews_word_vectors)
+        sorted_reviews_summaries_word_vectors = self.__sort_summaries(
+            summaries_word_vectors,
+            reviews_word_vectors
+        )
         self.say("Done loading data")
 
     def __count_words(self):
@@ -214,10 +217,10 @@ class KerasWordVectorizer:
         sorted_review_vectors = []
 
         reviews_lengths = self.__get_text_lengths(summaries_word_vectors)
-        num_unknown_summary_words = self.__get_unknown_words(
+        num_unknown_summary_words = self.__get_num_unknown_words(
             reviews_word_vectors
         )
-        num_unknown_review_words = self.__get_unknown_words(
+        num_unknown_review_words = self.__get_num_unknown_words(
             summaries_word_vectors
         )
 
