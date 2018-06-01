@@ -64,7 +64,7 @@ Example output:
 [TextSummaryUtilities]: Done
 [KerasWordVectorizer]: In verbose mode
 [KerasWordVectorizer]: Loading tensorflow and numpy...
-[KerasWordVectorizer]: Loading embeddings file 'numberbatch-en-17.02.txt'...done
+[KerasWordVectorizer]: Loading embeddings file 'numberbatch-en-17.02.txt'... done
 [KerasWordVectorizer]: Loading data...
 [KerasWordVectorizer]:   Counting word occurrences... done. Max 568,410.
 [KerasWordVectorizer]:   Creating word vector table...done. Found 6 words
