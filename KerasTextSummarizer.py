@@ -43,21 +43,27 @@ class KerasTextSummarizer:
         self.say("Done loading data")
 
     def clean_summaries(self, raw_summaries): 
+        self.say("Cleaning reviews and summaries...")
+        self.say("  Cleaning summaries... ", "")
         summaries = [
             summarizer_utilities.clean_text(summary, remove_stopwords=False)
             for summary in raw_summaries.Summary
         ]
+        self.say("done")
+        self.say("  Cleaning reviews... ", "")
         reviews = [
             summarizer_utilities.clean_text(review, remove_stopwords=False)
             for review in raw_summaries.Text
         ]
-        cleaned_review_summaries = []
+        self.say("done")
+        cleaned_reviews_summaries = []
         for row in range(1, len(summaries)):
             cleaned_review_summaries.append({
                 'summary': summaries[row],
                 'review': reviews[row]
             })
-        return cleaned_review_summaries
+        self.say("done")
+        return cleaned_reviews_summaries
 
     def __count_words(self):
         '''Count the number of occurrences of each word in a set of text'''
