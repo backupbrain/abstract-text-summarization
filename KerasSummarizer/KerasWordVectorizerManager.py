@@ -20,6 +20,7 @@ class KerasWordVectorizerManager:
         embeddings_filename,
         reviews_filename
     ):
+        self.say("Building word vectors")
         self.test_file(embeddings_filename)
         self.test_file(reviews_filename)
         summarizer_utilities = TextSummaryUtilities(
@@ -58,15 +59,16 @@ class KerasWordVectorizerManager:
             )
         sorted_reviews_summaries_word_vectors = \
             summarizer.load_vectors_from_data_pairs(cleaned_reviews_summaries)
-
+        self.say("Done")
         return sorted_reviews_summaries_word_vectors
 
     def save_vectors_to_file(self, word_vectors, filename):
+        self.say("Saving vectors to '{}'... ".format(filename), "")
         self.test_file(filename, "wb")
         save_file = gzip.open(filename, 'wb')
         pickle.dump(word_vectors, save_file)
         save_file.close()
-        self.say("Vectors saved to '{}'".format(filename))
+        self.say("done".format(filename))
 
     def test_file(self, filename, mode='r'):
         try:
