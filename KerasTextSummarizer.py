@@ -32,8 +32,9 @@ class KerasTextSummarizer:
             for line in f:
                 num_lines += 1
             for line in f:
+                line_number += 1
                 update_progress_bar(
-                    line_number += 1,
+                    line_number,
                     num_lines,
                     prefix = 'Progress:',
                     suffix = 'Done',
