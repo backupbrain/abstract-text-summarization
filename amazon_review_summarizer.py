@@ -71,6 +71,7 @@ def main():
         'Time'
     ]
     reviews_summaries = summarizer_utilities.drop_unwanted_columns(
+        reviews_summaries,
         unwanted_headers
     )
     summaries = [
