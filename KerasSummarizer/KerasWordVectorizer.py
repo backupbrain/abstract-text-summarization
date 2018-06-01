@@ -85,7 +85,7 @@ class KerasWordVectorizer:
 
         for word, vector in words_to_vectors.items():
             vectors_to_words[vector] = word
-        self.say("done. Found {:,} words".format(len(self.vectors_to_words)))
+        self.say("done. Found {:,} words".format(len(vectors_to_words)))
         return words_to_vectors, vectors_to_words
 
     def __build_word_embedding_matrix(self, words_to_vectors):
