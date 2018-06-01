@@ -104,7 +104,13 @@ class KerasTextSummarizer:
 
     def say(self, message, end="\n"):
         if self.in_verbose_mode is True:
-            print("[{}]: {}".format(self.__class__.__name__, message), end=end)
+            if self.do_print_verbose_header is True:
+                print(
+                    "[{}]: {}".format(self.__class__.__name__, message),
+                    end=end
+                )
+            else:
+                print(message, end=end)
         if end != "\n":
             self.do_print_verbose_header = False
         else:
