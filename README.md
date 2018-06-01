@@ -43,7 +43,41 @@ $ sudo cp numberbatch-en-17.02.txt /tmp/numberbatchramdisk
 The first step is to convert the Amazon reviews data into word vectors. This only needs to be done once each time there is a new data set.
 
 ```
-$./build_word_vectors.py Reviews.csv wordvectors.pklz --verbose
+$./build_word_vectors.py /path/to/numberbatch-en-17.02.txt /path/to/Reviews.csv /path/to/save_wordvectors.pklz --verbose
+```
+
+Example output:
+
+```
+[KerasWordVectorizerManager]: In verbose mode
+[KerasWordVectorizerManager]: Building word vectors
+[TextSummaryUtilities]: In verbose mode
+[TextSummaryUtilities]: Loading nltk and pandas...
+[TextSummaryUtilities]: Loading CSV file: 'Reviews.csv'... done
+[TextSummaryUtilities]: Dropping unwanted columns
+[TextSummaryUtilities]:   Original size: (568454, 10)
+[TextSummaryUtilities]:   New size: (568411, 2)
+[TextSummaryUtilities]: Done
+[TextSummaryUtilities]: Cleaning reviews and summaries...
+[TextSummaryUtilities]:   Cleaning summaries... done
+[TextSummaryUtilities]:   Cleaning reviews... done
+[TextSummaryUtilities]: Done
+[KerasWordVectorizer]: In verbose mode
+[KerasWordVectorizer]: Loading tensorflow and numpy...
+[KerasWordVectorizer]: Loading embeddings file 'numberbatch-en-17.02.txt'...done
+[KerasWordVectorizer]: Loading data...
+[KerasWordVectorizer]:   Counting word occurrences... done. Max 568,410.
+[KerasWordVectorizer]:   Creating word vector table...done. Found 6 words
+[KerasWordVectorizer]:   Creating word embedding matrix...Done
+[KerasWordVectorizer]:   Loading word vectors...  done. Found 48,408,060 unknown words (99.96%).
+[KerasWordVectorizer]:   Sorting summaries... 
+[KerasWordVectorizer]:     Counting words... done
+[KerasWordVectorizer]:    Counting unknown words... done
+[KerasWordVectorizer]:    Counting unknown words... done
+[KerasWordVectorizer]:   Sorting... done
+[KerasWordVectorizer]: Done loading data
+[KerasWordVectorizerManager]: Done
+[KerasWordVectorizerManager]: Saving vectors to 'save_wordvectors.pklz'... done
 ```
 
 The next step is to train the machine learning model.
