@@ -34,7 +34,12 @@ class KerasWordVectorizer:
             self.__load_embeddings_index(embeddings_index_filename)
 
     def __load_embeddings_index(self, embeddings_index_filename):
-        self.say("Loading embeddings file...", "")
+        self.say(
+            "Loading embeddings file '{}'... ".format(
+                embeddings_index_filename
+            ),
+            ""
+        )
         self.embeddings_index = {}
         with open(embeddings_index_filename, encoding='utf-8') as f:
             for line in f:

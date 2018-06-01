@@ -20,7 +20,7 @@ class KerasWordVectorizerManager:
         embeddings_filename,
         reviews_filename
     ):
-        self.say("Building word vectors")
+        self.say("Building word vectors... ")
         self.test_file(embeddings_filename)
         self.test_file(reviews_filename)
         summarizer_utilities = TextSummaryUtilities(

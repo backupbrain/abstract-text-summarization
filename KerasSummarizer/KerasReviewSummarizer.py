@@ -18,7 +18,7 @@ class KerasReviewSummarizer:
 
     def __load_embeddings_index(self, embeddings_index_filename):
         self.say(
-            "Loading embeddings file '{}'...".format(
+            "Loading embeddings file '{}'... ".format(
                 embeddings_index_filename
             ),
             ""
