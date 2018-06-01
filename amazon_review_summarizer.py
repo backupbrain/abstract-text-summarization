@@ -83,20 +83,9 @@ def main():
         reviews_summaries,
         unwanted_headers
     )
-    summaries = [
-        summarizer_utilities.clean_text(summary, remove_stopwords=False)
-        for summary in reviews_summaries.Summary
-    ]
-    reviews = [
-        summarizer_utilities.clean_text(review, remove_stopwords=False)
-        for review in reviews_summaries.Text
-    ]
-    cleaned_review_summaries = []
-    for row in range(1, len(summaries)):
-        cleaned_review_summaries.append({
-            'summary': summaries[row],
-            'review': reviews[row]
-        })
+    cleaned_review_summaries = summarizer_utilities.clean_summaries(
+        review_summaries
+    )
 
     summarizer = KerasTextSummarizer(
         embeddings_index_filename=embeddings_index_filename,
