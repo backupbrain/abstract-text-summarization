@@ -5,6 +5,7 @@ from tensorflow.python.layers.core import Dense
 
 
 class KerasTextSummarizer:
+    in_verbose_mode = False
     data = None
     codes = ["<UNK>", "<PAD>", "<EOS>", "<GO>"]
     word_ids = {}
@@ -14,9 +15,11 @@ class KerasTextSummarizer:
     max_word_usage_count = 20
     max_embedding_matrix_size = 300
 
-    def __init__(self, embeddings_index_filename=None):
+    def __init__(self, embeddings_index_filename=None, in_verbose_mode=False):
         if embeddings_index_filename is not None:
             self.__load_embeddings_index(embeddings_index_filename)
+        self.in_verbose_mode = in_verbose_mode
+        self.say("In verbose mode")
 
     def __load_embeddings_index(self, embeddings_index_filename):
         self.embeddings_index = {}
@@ -81,3 +84,7 @@ class KerasTextSummarizer:
                 )
                 self.embeddings_index[word] = new_embedding
                 word_embedding_matrix[id] = new_embedding
+
+    def say(self, message):
+        if self.in_verbose_mode is True:
+            print("[{}]: {}".format(self.__class__.__name__, message))

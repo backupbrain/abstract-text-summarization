@@ -5,15 +5,23 @@ from nltk_english_contractions import contraction_list
 
 
 class TextSummaryUtilities:
+    in_verbose_mode = False
+
+    def __init__(self, in_verbose_mode=False):
+        self.in_verbose_mode = in_verbose_mode
+        self.say("In verbose mode")
 
     def load_data_from_csv(self, filename):
         data = pd.read_csv(filename)
         return data
 
-    def drop_unwanted_columns(self, data, headers=None):
+    def drop_unwanted_columns(self, data, headers=None, in_verbose_mode=False):
+        self.say("dropping unwanted columns")
+        self.say("Original size: {}".format(str(data.shape)))
         data = data.dropna()
         if isinstance(headers, type([])):
             data = data.drop(headers, 1)
+        self.say("New size: {}".format(str(data.shape)))
         return data
 
     def clean_text(self, text, remove_stopwords=True):
@@ -66,3 +74,7 @@ class TextSummaryUtilities:
         for text in data.Text:
             clean_texts.append(self.clean_text(text))
         print("Texts are complete.")
+
+    def say(self, message):
+        if self.in_verbose_mode is True:
+            print("[{}]: {}".format(self.__class__.__name__, message))

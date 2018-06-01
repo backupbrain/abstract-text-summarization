@@ -90,7 +90,7 @@ def main():
         })
 
     summarizer = KerasTextSummarizer(
-        embeddings_index=embeddings_index_filename
+        embeddings_index_filename=embeddings_index_filename
     )
     summarizer.load_data(cleaned_review_summaries)
 
