@@ -182,9 +182,9 @@ class KerasWordVectorizer:
 
     def __get_num_unknown_words(self, words_to_vectors):
         '''Counts the number of time UNK appears in a sentence.'''
-        self.say("   Counting unknown words... ", "")
+        self.say("    Counting unknown words... ", "")
         num_unknown_words = 0
-        for word in word_vectors:
+        for word in words_to_vectors:
             if word == words_to_vectors["<UNK>"]:
                 num_unknown_words += 1
         self.say("done")
