@@ -3,6 +3,8 @@ import argparse
 import sys
 from KerasWordVectorizer import KerasWordVectorizer
 from TextSummaryUtilities import TextSummaryUtilities
+import pickle
+import zip
 
 # Embeddings Index
 embeddings_index_filename = 'numberbatch-en-17.02.txt'
@@ -36,6 +38,10 @@ def build_command_parser():
         help='Load the amazon reviews CSV file, available on kaggle.com'
     )
     parser.add_argument(
+        'save_file',
+        help='Save the vectorized data into a this file'
+    )
+    parser.add_argument(
         '--verbose',
         action='store_true',
         help='Print debugging messages'
@@ -55,6 +61,14 @@ def main():
         sys.exit("Error: File '{}' was not readable".format(
             command_arguments.reviews_file
         ))
+    try:
+        with open(command_arguments.save_file, 'wb') as f:
+            f.close()
+    except:
+        sys.exit("Error: File '{}' was not writable".format(
+            command_arguments.save_file
+        ))
+
 
     summarizer_utilities = TextSummaryUtilities(
         in_verbose_mode=command_arguments.verbose
@@ -91,7 +105,16 @@ def main():
         embeddings_index_filename=embeddings_index_filename,
         in_verbose_mode=command_arguments.verbose
     )
-    summarizer.load_vectors_from_data_pairs(cleaned_reviews_summaries)
+    sorted_reviews_summaries_word_vectors = \
+        summarizer.load_vectors_from_data_pairs(cleaned_reviews_summaries)
+
+    save_file = gzip.open(command_arguments.save_file, 'wb')
+    pickle.dump(sorted_reviews_summaries_word_vectors, save_file)
+    save_file.close()
+    if command_arguments.verbose is True:
+        print("Word vectors saved into '{}'".format(
+            command_arguments.save_file
+        ))
 
 
 if __name__ == "__main__":

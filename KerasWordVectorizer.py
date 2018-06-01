@@ -1,6 +1,5 @@
 import numpy as np
 from progressbar import update_progress_bar
-import pandas as pd
 
 
 class KerasWordVectorizer:
@@ -69,6 +68,7 @@ class KerasWordVectorizer:
             reviews_word_vectors
         )
         self.say("Done loading data")
+        return sorted_reviews_summaries_word_vectors
 
     def __count_words(self):
         '''Count the number of occurrences of each word in a set of text'''
@@ -183,13 +183,6 @@ class KerasWordVectorizer:
         ))
         return result
 
-    def __create_lengths_data_frame(self, text):
-        '''Create a data frame of the sentence lengths from a text'''
-        lengths = []
-        for sentence in text:
-            lengths.append(len(sentence))
-        return pd.DataFrame(lengths, columns=['counts'])
-
     def __get_text_lengths(self, text):
         self.say("    Counting words... ", "")
         num_words = []
@@ -209,7 +202,7 @@ class KerasWordVectorizer:
         return num_unknown_words
 
     def __sort_summaries(self, summaries_word_vectors, reviews_word_vectors):
-        self.say("  Sorting summaries... ", "")
+        self.say("  Sorting summaries... ")
         sorted_summary_vectors = []
         sorted_review_vectors = []
 
@@ -221,6 +214,7 @@ class KerasWordVectorizer:
             summaries_word_vectors
         )
 
+        self.say("  Sorting... ", "")
         for length in range(
             min(reviews_lengths), self.max_review_length
         ):
