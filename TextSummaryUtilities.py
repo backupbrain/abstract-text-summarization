@@ -83,6 +83,7 @@ class TextSummaryUtilities:
                 'summary': summaries[row],
                 'review': reviews[row]
             })
+        self.say("", "")
         self.say("done")
         return cleaned_reviews_summaries
 
@@ -104,3 +105,7 @@ class TextSummaryUtilities:
     def say(self, message, end="\n"):
         if self.in_verbose_mode is True:
             print("[{}]: {}".format(self.__class__.__name__, message), end=end)
+        if end != "\n":
+            self.do_print_verbose_header = False
+        else:
+            self.do_print_verbose_header = True

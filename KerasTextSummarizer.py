@@ -45,7 +45,8 @@ class KerasTextSummarizer:
 
     def __count_words(self):
         '''Count the number of occurrences of each word in a set of text'''
-        self.say("  Counting number of unique words... ", "")
+        self.say("  Counting number of word occurrences... ", "")
+        largest_word_count = 0
         for branch in self.data:
             for row in branch:
                 for word in row.split():
@@ -53,7 +54,11 @@ class KerasTextSummarizer:
                         self.word_counts[word] = 1
                     else:
                         self.word_counts[word] += 1
-        self.say("done")
+                    if self.word_counts[word] > largest_word_count:
+                        largest_word_count = self.word_counts[word]
+        self.say("done. Max {} occurences.".format(
+            len(self.largest_word_count)
+        ))
 
     def __build_word_id_table(self):
         self.say("  Creating word vector table...", "")
