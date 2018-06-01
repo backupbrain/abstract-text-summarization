@@ -58,7 +58,7 @@ class KerasWordVectorizer:
         self.say("  Counting word occurrences... ", "")
         word_counts = {}
         largest_word_count = 0
-        for branch in self.reviews_summaries:
+        for branch in reviews_summaries:
             for row in branch:
                 for word in row.split():
                     if word not in self.word_counts:
