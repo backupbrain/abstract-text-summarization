@@ -12,16 +12,19 @@ class TextSummaryUtilities:
         self.say("In verbose mode")
 
     def load_data_from_csv(self, filename):
+        self.say("Loading CSV file: '{}'...".format(filename), "")
         data = pd.read_csv(filename)
+        self.say("done")
         return data
 
     def drop_unwanted_columns(self, data, headers=None, in_verbose_mode=False):
-        self.say("dropping unwanted columns")
-        self.say("Original size: {}".format(str(data.shape)))
+        self.say("Dropping unwanted columns")
+        self.say("  Original size: {}".format(str(data.shape)))
         data = data.dropna()
         if isinstance(headers, type([])):
             data = data.drop(headers, 1)
-        self.say("New size: {}".format(str(data.shape)))
+        self.say("  New size: {}".format(str(data.shape)))
+        self.say("Done")
         return data
 
     def clean_text(self, text, remove_stopwords=True):

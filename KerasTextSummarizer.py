@@ -16,12 +16,13 @@ class KerasTextSummarizer:
     max_embedding_matrix_size = 300
 
     def __init__(self, embeddings_index_filename=None, in_verbose_mode=False):
-        if embeddings_index_filename is not None:
-            self.__load_embeddings_index(embeddings_index_filename)
         self.in_verbose_mode = in_verbose_mode
         self.say("In verbose mode")
+        if embeddings_index_filename is not None:
+            self.__load_embeddings_index(embeddings_index_filename)
 
     def __load_embeddings_index(self, embeddings_index_filename):
+        self.say("Loading embeddings file...", "")
         self.embeddings_index = {}
         with open(embeddings_index_filename, encoding='utf-8') as f:
             for line in f:
@@ -29,13 +30,16 @@ class KerasTextSummarizer:
                 word = values[0]
                 embedding = np.asarray(values[1:], dtype='float32')
                 self.embeddings_index[word] = embedding
+        self.say("done")
 
     def load_data(self, data):
+        self.say("Loading data...")
         self.data = data
         self.word_counts = {}
         self.__count_words()
         self.__build_word_id_table()
         self.__build_word_embedding_matrix()
+        self.say("Done loading data")
 
     def __count_words(self):
         '''Count the number of occurrences of each word in a set of text'''
@@ -48,6 +52,7 @@ class KerasTextSummarizer:
                         self.word_counts[word] += 1
 
     def __build_word_id_table(self):
+        self.say("  Creating word vector table...", "")
         self.word_ids = {}
         self.id_words = {}
         value = 0
@@ -61,8 +66,10 @@ class KerasTextSummarizer:
 
         for word, id in self.word_ids.items():
             self.id_words[id] = word
+        self.say("done. Found {} words".format(str(self.id_words)))
 
     def __build_word_embedding_matrix(self):
+        self.say("  Creating word embedding matrix...", "")
         num_words = len(self.word_ids)
 
         # Create matrix with default values of zeroo
@@ -84,7 +91,8 @@ class KerasTextSummarizer:
                 )
                 self.embeddings_index[word] = new_embedding
                 word_embedding_matrix[id] = new_embedding
+        self.say("done")
 
-    def say(self, message):
+    def say(self, message, end=None):
         if self.in_verbose_mode is True:
-            print("[{}]: {}".format(self.__class__.__name__, message))
+            print("[{}]: {}".format(self.__class__.__name__, message), end)
