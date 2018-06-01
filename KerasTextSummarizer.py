@@ -20,8 +20,10 @@ class KerasTextSummarizer:
     def __init__(self, embeddings_index_filename=None, in_verbose_mode=False):
         self.in_verbose_mode = in_verbose_mode
         self.say("In verbose mode")
+        self.say("Loading tensorflow and numpy...", "")
         if embeddings_index_filename is not None:
             self.__load_embeddings_index(embeddings_index_filename)
+        self.say("done")
 
     def __load_embeddings_index(self, embeddings_index_filename):
         self.say("Loading embeddings file...", "")

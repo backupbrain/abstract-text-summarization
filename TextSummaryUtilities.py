@@ -11,6 +11,8 @@ class TextSummaryUtilities:
     def __init__(self, in_verbose_mode=False):
         self.in_verbose_mode = in_verbose_mode
         self.say("In verbose mode")
+        self.say("Loading nltk and pandas...","")
+        self.say("done")
 
     def load_data_from_csv(self, filename):
         self.say("Loading CSV file: '{}'...".format(filename), "")
