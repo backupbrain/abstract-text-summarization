@@ -79,8 +79,9 @@ class KerasReviewSummarizer:
     def load_word_vectors(self, word_vectors):
         self.word_vectors = word_vectors
 
-    def build_graph(self, words_to_vectors):
+    def build_graph(self):
         self.say("Building graph...")
+        words_to_vectors = self.words_to_vectors
         # epochs = 100
         batch_size = 64
         rnn_size = 256

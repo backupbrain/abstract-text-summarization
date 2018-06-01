@@ -15,19 +15,21 @@ class KerasReviewSummarizerManager:
         self.say("In verbose mode")
 
     def load_summarizer(
-    	self,
-    	word_vectors,
-    	words_to_vectors,
-    	embeddings_index_filename
+        self,
+        word_vectors,
+        words_to_vectors,
+        embeddings_index_filename
     ):
-    	self.say("Loading KerasReviewSummarizer...")
-    	self.keras_summarizer = KerasReviewSummarizer(
-		    word_vectors=word_vectors,
-		    words_to_vectors=words_to_vectors,
-		    embeddings_index_filename=embeddings_index_filename,
-		    in_verbose_mode=self.in_verbose_mode
-    	)
-    	self.say("Done")
+        self.say("Loading KerasReviewSummarizer...")
+        self.keras_summarizer = KerasReviewSummarizer(
+            word_vectors=word_vectors,
+            words_to_vectors=words_to_vectors,
+            embeddings_index_filename=embeddings_index_filename,
+            in_verbose_mode=self.in_verbose_mode
+        )
+        self.say("Done")
+
+    def build_model(self)
 
     def load_data_from_file(self, filename):
         self.say("Reading data from '{}'... ".format(filename), "")
