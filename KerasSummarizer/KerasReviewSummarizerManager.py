@@ -37,7 +37,7 @@ class KerasReviewSummarizerManager:
         self.test_file(filename, "rb")
         file = gzip.open(filename, 'rb')
         data = pickle.load(file)
-        data.close()
+        file.close()
         return data
         self.say("done")
 
