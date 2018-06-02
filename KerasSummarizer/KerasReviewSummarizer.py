@@ -358,7 +358,27 @@ class KerasReviewSummarizer:
 
     def __build_word_embeddings_matrix(self, words_to_vectors):
         self.say("Building word embeddings matrix... ", "")
-        self.word_embedding_matrix = {}
+        embedding_dim = 300
+        num_words = len(vocab_to_int)
+        self.word_embdding_matrix = np.zeros(
+            (num_words, embedding_dim),
+            dtype=np.float32
+        )
+        for word, i in vocab_to_int.items():
+            if word in self.embeddings_index:
+                self.word_embedding_matrix[i] = self.embeddings_index[word]
+            else:
+                # if word is not in CN, cerate a random embedding
+                new_embedding = np.array(
+                    np.random.uniform(-1.0, 1.0, embedding_dim)
+                )
+                self.embeddings_index[word] = new_embedding
+                self.word_embedding_matrix[i] = new_embedding
+        # Check if value matches len(words_to_vectors)
+        # print(len(word_embedding_matrix))
+        self.say("done")
+
+
         embedding_dim = 300
         nb_words = len(words_to_vectors)
         # Create matrix with default values of zero

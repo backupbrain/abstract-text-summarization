@@ -51,7 +51,7 @@ def main():
             command_arguments.vectors_save_file
         )
         vectorizor_manager.save_data_to_file(
-            sorted_reviews_summaries_word_vectors,
+            words_to_vectors,
             command_arguments.words_to_vectors_save_file
         )
     except Exception as e:
