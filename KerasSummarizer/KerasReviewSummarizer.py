@@ -350,10 +350,10 @@ class KerasReviewSummarizer:
         with open(embeddings_index_filename) as f:
             for line in f:
                 values = line.split(' ')
-                print(values)
                 word = values[0]
-                embedding = np.asarray(values[1:], dtype='float32')
-                self.embeddings_index[word] = embedding
+                if len(values) > 2:
+                    embedding = np.asarray(values[1:], dtype='float32')
+                    self.embeddings_index[word] = embedding
         self.say("done")
         self.__build_word_embeddings_matrix(self.words_to_vectors)
 
