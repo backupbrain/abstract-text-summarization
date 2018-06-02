@@ -33,13 +33,11 @@ class KerasReviewSummarizerManager:
         self.keras_summarizer.build_graph()
 
     def load_data_from_file(self, filename):
-        self.say("Reading data from '{}'... ".format(filename), "")
         self.test_file(filename, "rb")
         file = gzip.open(filename, 'rb')
         data = pickle.load(file)
         file.close()
         return data
-        self.say("done")
 
     def test_file(self, filename, mode='r'):
         try:
