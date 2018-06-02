@@ -41,14 +41,18 @@ class KerasReviewSummarizerManager:
         return data
         self.say("done")
 
-
     def test_file(self, filename, mode='r'):
         try:
-            with open(filename, 'r') as f:
+            with open(filename, mode) as f:
                 f.close()
         except:
-            raise Exception("File '{}' was not readable".format(
-                filename
+            access_mode = "readable"
+            if 'w' in mode or 'a' in mode:
+                access_mode = 'writeable'
+
+            raise Exception("File '{}' was not {}".format(
+                filename,
+                access_mode
             ))
 
     def say(self, message, end="\n"):
