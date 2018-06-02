@@ -1,5 +1,5 @@
 from .KerasWordVectorizer import KerasWordVectorizer
-from .TextSummaryUtilities import TextSummaryUtilities
+from .DataPreprocessor import DataPreprocessor
 import pickle
 import gzip
 

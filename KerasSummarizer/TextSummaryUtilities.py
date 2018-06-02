@@ -4,7 +4,7 @@ from nltk.corpus import stopwords
 from .nltk_english_contractions import contraction_list
 
 
-class TextSummaryUtilities:
+class DataPreprocessor:
     in_verbose_mode = False
     do_print_verbose_header = True
 
