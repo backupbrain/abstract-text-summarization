@@ -353,10 +353,11 @@ class KerasReviewSummarizer:
                 word = values[0]
                 embedding = np.asarray(values[1:], dtype='float32')
                 self.embeddings_index[word] = embedding
-        self.__build_word_embeddings_matrix(self.words_to_vectors)
         self.say("done")
+        self.__build_word_embeddings_matrix(self.words_to_vectors)
 
     def __build_word_embeddings_matrix(self, words_to_vectors):
+        self.say("Building word embeddings matrix... ", "")
         embedding_dim = 300
         nb_words = len(words_to_vectors)
         # Create matrix with default values of zero
@@ -377,9 +378,19 @@ class KerasReviewSummarizer:
 
         # Check if value matches len(words_to_vectors)
         # print(len(word_embedding_matrix))
+        self.say("done")
 
-    def __process_encoding_input(self, target_data, words_to_vectors, batch_size):
-        '''Remove the last word id from each batch and concat the <GO> to the begining of each batch'''
+    def __process_encoding_input(
+        self,
+        target_data,
+        words_to_vectors,
+        batch_size
+    ):
+        '''
+        Remove the last word id from each batch and concat
+        the <GO> to the begining of each batch
+        '''
+        self.say("  Processing encoding input... ", "")
         ending = tf.strided_slice(
             target_data,
             [0, 0],
@@ -390,6 +401,7 @@ class KerasReviewSummarizer:
             [tf.fill([batch_size, 1], words_to_vectors['<GO>']), ending],
             1
         )
+        self.say(" done")
         return dec_input
 
     def __encoding_layer(
@@ -401,6 +413,7 @@ class KerasReviewSummarizer:
         keep_probability
     ):
         '''Create the encoding layer'''
+        self.say("  Encoding layer... ", "")
         for layer in range(num_layers):
             with tf.variable_scope('encoder_{}'.format(layer)):
                 cell_fw = tf.contrib.rnn.LSTMCell(
@@ -436,6 +449,7 @@ class KerasReviewSummarizer:
                 )
         # Join outputs since we are using a bidirectional RNN
         enc_output = tf.concat(enc_output, 2)
+        self.say("done")
         return enc_output, enc_state
 
     def __training_decoding_layer(
@@ -449,6 +463,7 @@ class KerasReviewSummarizer:
         max_summary_length
     ):
         """Create the training logits"""
+        self.say("  Training encoding layer... ", "")
         training_helper = tf.contrib.seq2seq.TrainingHelper(
             inputs=dec_embed_input,
             sequence_length=self.summary_length,
@@ -466,6 +481,7 @@ class KerasReviewSummarizer:
             impute_finished=True,
             maximum_iterations=self.max_summary_length
         )
+        self.say("done")
         return training_logits
 
     def __inference_decoding_layer(
@@ -527,6 +543,7 @@ class KerasReviewSummarizer:
         Create the decoding cell and attention for the
         training and inference decoding layers
         '''
+        self.say("Decoding layer... ")
         for layer in range(num_layers):
             with tf.variable_scope('decoder_{}'.format(layer)):
                 lstm = tf.contrib.rnn.LSTMCell(
@@ -590,7 +607,7 @@ class KerasReviewSummarizer:
                 max_summary_length,
                 batch_size
             )
-
+        self.say("Done decoding layer")
         return training_logits, inference_logits
 
     def __seq2seq_model(
@@ -614,6 +631,8 @@ class KerasReviewSummarizer:
 
         # Use Numberbatch's embeddings and the
         # newly created ones as our embeddings
+
+        self.say("  Building Sequence to Sequence model... ")
         embeddings = self.word_embedding_matrix
 
         enc_embed_input = tf.nn.embedding_lookup(embeddings, input_data)
@@ -646,7 +665,7 @@ class KerasReviewSummarizer:
             batch_size,
             num_layers
         )
-
+        self.say("Done building Sequence 2 Sequence model")
         return training_logits, inference_logits
 
     '''
