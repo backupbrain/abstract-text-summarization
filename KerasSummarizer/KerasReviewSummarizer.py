@@ -349,8 +349,8 @@ class KerasReviewSummarizer:
         self.embeddings_index = {}
         with open(embeddings_index_filename) as f:
             for line in f:
-                print(line)
                 values = line.split(' ')
+                print(values)
                 word = values[0]
                 embedding = np.asarray(values[1:], dtype='float32')
                 self.embeddings_index[word] = embedding
