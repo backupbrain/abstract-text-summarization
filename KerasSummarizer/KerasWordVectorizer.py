@@ -81,6 +81,7 @@ class KerasWordVectorizer:
         vectors_to_words = {}
         vector = 0
         for word, count in reviews_summaries_word_counts.items():
+            print("{}: {}".format(word, count))
             if count >= self.MAX_WORD_USAGE_COUNT or \
                     word in self.embeddings_index:
                 words_to_vectors[word] = vector
