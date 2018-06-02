@@ -41,20 +41,20 @@ def main():
         command_arguments.verbose
     )
 
-    try:
-        word_vectors = summarizer_manager.load_data_from_file(
-            command_arguments.word_vectors_file
-        )
-        words_to_vectors = summarizer_manager.load_data_from_file(
-            command_arguments.words_to_vectors_file
-        )
-        summarizer_manager.load_summarizer(
-            word_vectors,
-            words_to_vectors,
-            command_arguments.embeddings_file
-        )
-    except Exception as e:
-        sys.exit("Error: {}".format(str(e)))
+    # try:
+    word_vectors = summarizer_manager.load_data_from_file(
+        command_arguments.word_vectors_file
+    )
+    words_to_vectors = summarizer_manager.load_data_from_file(
+        command_arguments.words_to_vectors_file
+    )
+    summarizer_manager.load_summarizer(
+        word_vectors,
+        words_to_vectors,
+        command_arguments.embeddings_file
+    )
+    # except Exception as e:
+    #     sys.exit("Error: {}".format(str(e)))
 
 
 if __name__ == "__main__":
