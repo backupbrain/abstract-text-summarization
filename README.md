@@ -74,17 +74,17 @@ Example output:
 ```
 [KerasWordVectorizerManager]: In verbose mode
 [KerasWordVectorizerManager]: Building word vectors
-[TextSummaryUtilities]: In verbose mode
-[TextSummaryUtilities]: Loading nltk and pandas...
-[TextSummaryUtilities]: Loading CSV file: 'Reviews.csv'... done
-[TextSummaryUtilities]: Dropping unwanted columns
-[TextSummaryUtilities]:   Original size: (568454, 10)
-[TextSummaryUtilities]:   New size: (568411, 2)
-[TextSummaryUtilities]: Done
-[TextSummaryUtilities]: Cleaning reviews and summaries...
-[TextSummaryUtilities]:   Cleaning summaries... done
-[TextSummaryUtilities]:   Cleaning reviews... done
-[TextSummaryUtilities]: Done
+[DataPreprocessor]: In verbose mode
+[DataPreprocessor]: Loading nltk and pandas...
+[DataPreprocessor]: Loading CSV file: 'Reviews.csv'... done
+[DataPreprocessor]: Dropping unwanted columns
+[DataPreprocessor]:   Original size: (568454, 10)
+[DataPreprocessor]:   New size: (568411, 2)
+[DataPreprocessor]: Done
+[DataPreprocessor]: Cleaning reviews and summaries...
+[DataPreprocessor]:   Cleaning summaries... done
+[DataPreprocessor]:   Cleaning reviews... done
+[DataPreprocessor]: Done
 [KerasWordVectorizer]: In verbose mode
 [KerasWordVectorizer]: Loading tensorflow and numpy...
 [KerasWordVectorizer]: Loading embeddings file 'numberbatch-en-17.02.txt'... done
