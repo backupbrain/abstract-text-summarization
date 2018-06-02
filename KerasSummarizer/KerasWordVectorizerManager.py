@@ -62,11 +62,11 @@ class KerasWordVectorizerManager:
         self.say("Done")
         return words_to_vectors, sorted_reviews_summaries_word_vectors
 
-    def save_vectors_to_file(self, word_vectors, filename):
-        self.say("Saving vectors to '{}'... ".format(filename), "")
+    def save_data_to_file(self, data, filename):
+        self.say("Saving data to '{}'... ".format(filename), "")
         self.test_file(filename, "wb")
         save_file = gzip.open(filename, 'wb')
-        pickle.dump(word_vectors, save_file)
+        pickle.dump(data, save_file)
         save_file.close()
         self.say("done")
 

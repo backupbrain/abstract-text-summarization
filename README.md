@@ -66,7 +66,7 @@ $ sudo cp numberbatch-en-17.02.txt /tmp/numberbatchramdisk
 The first step is to convert the Amazon reviews data into word vectors. This only needs to be done once each time there is a new data set.
 
 ```
-$./build_word_vectors.py /path/to/numberbatch-en-17.02.txt /path/to/Reviews.csv /path/to/save_wordvectors.pklz --verbose
+$./build_word_vectors.py /path/to/numberbatch-en-17.02.txt /path/to/Reviews.csv /path/to/save_text_word_vectors.pklz /path/to/save_word_vector_lookup.pklz --verbose
 ```
 
 Example output:
@@ -100,7 +100,8 @@ Example output:
 [KerasWordVectorizer]:   Sorting... done
 [KerasWordVectorizer]: Done loading vectors
 [KerasWordVectorizerManager]: Done
-[KerasWordVectorizerManager]: Saving vectors to 'save_wordvectors.pklz'... done
+[KerasWordVectorizerManager]: Saving data to 'save_text_word_vectors.pklz'... done
+[KerasWordVectorizerManager]: Saving data to 'save_word_vector_lookup.pklz'... done
 ```
 
 The next step is to train the machine learning model.
