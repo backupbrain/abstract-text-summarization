@@ -368,7 +368,6 @@ class KerasReviewSummarizer:
         )
         for word, i in words_to_vectors.items():
             if word in self.embeddings_index:
-                print(word, i)
                 self.word_embedding_matrix[i] = self.embeddings_index[word]
             else:
                 # If word not in CN, create a random embedding for it
