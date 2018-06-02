@@ -23,12 +23,12 @@ class KerasWordVectorizerManager:
         self.say("Building word vectors... ")
         self.test_file(embeddings_filename)
         self.test_file(reviews_filename)
-        summarizer_utilities = TextSummaryUtilities(
+        data_preprocessor = DataPreprocessor(
             in_verbose_mode=self.in_verbose_mode
         )
         reviews_summaries = None
         try:
-            reviews_summaries = summarizer_utilities.load_data_from_csv(
+            reviews_summaries = data_preprocessor.load_data_from_csv(
                 reviews_filename
             )
         except:
@@ -45,12 +45,12 @@ class KerasWordVectorizerManager:
             'Score',
             'Time'
         ]
-        reviews_summaries = summarizer_utilities.drop_unwanted_columns(
+        reviews_summaries = data_preprocessor.drop_unwanted_columns(
             reviews_summaries,
             unwanted_headers
         )
         cleaned_reviews_summaries = \
-            summarizer_utilities.clean_reviews_summaries(
+            data_preprocessor.clean_reviews_summaries(
                 reviews_summaries
             )
         summarizer = KerasWordVectorizer(
