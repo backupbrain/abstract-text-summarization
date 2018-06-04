@@ -60,7 +60,7 @@ class KerasReviewSummarizerManager:
         text_vectors = pickle.load(file)
         file.close()
         file = gzip.open(words_to_vectors_filename, 'rb')
-        words_tovectors = pickle.load(file)
+        words_to_vectors = pickle.load(file)
         file.close()
         file = gzip.open(word_embeddings_filename, 'rb')
         word_embeddings = pickle.load(file)
