@@ -51,7 +51,7 @@ class KerasReviewSummarizerManager:
         )
         word_embeddings_filename = "{}{}".format(
             file_prefix,
-            self.EMBEDDINGS_FILE
+            self.WORD_EMBEDDINGS_FILE
         )
         self.test_file(word_vectors_filename, "rb")
         self.test_file(text_vectors_filename, "rb")
