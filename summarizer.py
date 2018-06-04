@@ -16,13 +16,8 @@ def build_command_parser():
              'GloVe, or Gigaword'
     )
     parser.add_argument(
-        'word_vectors_file',
-        help='Load the vectorized reviews, created with build_word_vectors.py'
-    )
-    parser.add_argument(
-        'words_to_vectors_file',
-        help='Load the word/vector lookup data,'
-             'created with build_word_vectors.py'
+        'load_prefix',
+        help='Load the files with this prefix'
     )
     parser.add_argument(
         '--verbose',
@@ -42,12 +37,10 @@ def main():
     )
 
     # try:
-    word_vectors = summarizer_manager.load_data_from_file(
-        command_arguments.word_vectors_file
-    )
-    words_to_vectors = summarizer_manager.load_data_from_file(
-        command_arguments.words_to_vectors_file
-    )
+    word_vectors, words_to_vectors, word_embeddings = \
+        summarizer_manager.load_data_from_file(
+            command_arguments.load_prefix
+        )
     summarizer_manager.load_summarizer(
         word_vectors,
         words_to_vectors,

@@ -8,6 +8,9 @@ class KerasReviewSummarizerManager:
     in_verbose_mode = False
     do_print_verbose_header = True
     keras_summarizer = None
+    TEXT_VECTORS_FILE = 'text_vectors.pklz'
+    WORDS_TO_VECTORS_FILE = 'word_vectors.pklz'
+    WORD_EMBEDDINGS_FILE = 'embeddings.pklz'
 
     def __init__(
         self,
@@ -34,12 +37,32 @@ class KerasReviewSummarizerManager:
     def build_model(self):
         self.keras_summarizer.build_graph()
 
-    def load_data_from_file(self, filename):
-        self.test_file(filename, "rb")
-        file = gzip.open(filename, 'rb')
-        data = pickle.load(file)
+    def load_data_from_prefix(self, file_prefix):
+        text_vectors_filename = "{}{}".format(
+            file_prefix,
+            self.TEXT_VECTORS_FILE
+        )
+        words_to_vectors_filename = "{}{}".format(
+            file_prefix,
+            self.WORDS_TO_VECTORS_FILE
+        )
+        word_embeddings_filename = "{}{}".format(
+            file_prefix,
+            self.EMBEDDINGS_FILE
+        )
+        self.test_file(word_vectors_filename, "rb")
+        self.test_file(text_vectors_filename, "rb")
+        self.test_file(word_embeddings_filename, "rb")
+        file = gzip.open(text_vectors_filename, 'rb')
+        text_vectors = pickle.load(file)
         file.close()
-        return data
+        file = gzip.open(word_vectors_filename, 'rb')
+        words_tovectors = pickle.load(file)
+        file.close()
+        file = gzip.open(word_embeddings_filename, 'rb')
+        word_embeddings = pickle.load(file)
+        file.close()
+        return text_vectors, words_to_vectors, word_embeddings
 
     def test_file(self, filename, mode='r'):
         try:
