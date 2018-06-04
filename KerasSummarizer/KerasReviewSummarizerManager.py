@@ -53,7 +53,7 @@ class KerasReviewSummarizerManager:
             file_prefix,
             self.WORD_EMBEDDINGS_FILE
         )
-        self.test_file(word_vectors_filename, "rb")
+        self.test_file(words_to_vectors_filename, "rb")
         self.test_file(text_vectors_filename, "rb")
         self.test_file(word_embeddings_filename, "rb")
         file = gzip.open(text_vectors_filename, 'rb')
