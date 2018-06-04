@@ -1,4 +1,5 @@
 import numpy as np
+from datetime import datetime
 
 
 class KerasWordVectorizer:
@@ -15,12 +16,11 @@ class KerasWordVectorizer:
     MIN_UNKNOWN_REVIEW_WORDS = 1
     embeddings_index = None
 
-    def __init__(self, embeddings_index_filename=None, in_verbose_mode=False):
+    def __init__(self, embeddings_index_filename, in_verbose_mode=False):
         self.in_verbose_mode = in_verbose_mode
         self.say("In verbose mode")
         self.say("Loading tensorflow and numpy...")
-        if embeddings_index_filename is not None:
-            self.__load_embeddings_index(embeddings_index_filename)
+        self.__load_embeddings_index(embeddings_index_filename)
 
     def __load_embeddings_index(self, embeddings_index_filename):
         self.say(
@@ -36,14 +36,24 @@ class KerasWordVectorizer:
                 word = values[0]
                 embedding = np.asarray(values[1:], dtype='float32')
                 self.embeddings_index[word] = embedding
-        self.say("done")
+        self.say("done. {} word embeddings.".format(
+            len(self.embeddings_index))
+        )
 
-    def load_vectors_from_data_pairs(self, reviews_summaries):
+    def get_vectors_from_data_pairs(self, reviews_summaries):
         self.say("Loading vectors from data pairs...")
         reviews_summaries_word_counts = self.__count_words(reviews_summaries)
+        self.__count_unknown_words(reviews_summaries_word_counts)
         words_to_vectors, vectors_to_words = \
             self.__build_word_vector_table(reviews_summaries_word_counts)
-        self.__build_word_embedding_matrix(words_to_vectors)
+        return words_to_vectors, vectors_to_words
+
+    def get_reviews_summaries_word_vectors(
+        self,
+        reviews_summaries,
+        words_to_vectors
+    ):
+        self.say("Getting review summary word vectors...")
         word_vector_info = self.__convert_words_to_vectors(
             words_to_vectors,
             reviews_summaries
@@ -56,23 +66,36 @@ class KerasWordVectorizer:
             words_to_vectors
         )
         self.say("Done loading vectors")
-        return words_to_vectors, sorted_reviews_summaries_word_vectors
+        return sorted_reviews_summaries_word_vectors
+
+    def __count_unknown_words(self, word_counts):
+        num_unknown_words = 0
+        for word, count in word_counts.items():
+            if count > self.MAX_WORD_USAGE_COUNT:
+                if word not in self.embeddings_index:
+                    num_unknown_words += 1
+                    
+        percent_unknown_words = round(
+            num_unknown_words / len(word_counts)
+        ) * 100
+        self.say("  Found {:,} unknown words ({}%)".format(
+            num_unknown_words,
+            percent_unknown_words
+        ))
+        return num_unknown_words
 
     def __count_words(self, reviews_summaries):
         '''Count the number of occurrences of each word in a set of text'''
         self.say("  Counting word occurrences... ", "")
         word_counts = {}
-        largest_word_count = 0
-        for branch in reviews_summaries:
-            for row in branch:
-                for word in row.split():
+        for row in reviews_summaries:
+            for branch, text in row.items():
+                for word in text.split():
                     if word not in word_counts:
                         word_counts[word] = 1
                     else:
                         word_counts[word] += 1
-                    if word_counts[word] > largest_word_count:
-                        largest_word_count = word_counts[word]
-        self.say("done. Max {:,}.".format(largest_word_count))
+        self.say("done. {:,} words.".format(len(word_counts)))
         return word_counts
 
     def __build_word_vector_table(self, reviews_summaries_word_counts):
@@ -93,7 +116,7 @@ class KerasWordVectorizer:
         self.say("done. Found {:,} words".format(len(vectors_to_words)))
         return words_to_vectors, vectors_to_words
 
-    def __build_word_embedding_matrix(self, words_to_vectors):
+    def get_word_embedding_matrix(self, words_to_vectors):
         self.say("  Creating word embedding matrix... ", "")
         num_words = len(words_to_vectors)
 
@@ -116,7 +139,10 @@ class KerasWordVectorizer:
                 )
                 self.embeddings_index[word] = new_embedding
                 word_embedding_matrix[id] = new_embedding
-        self.say("done")
+        self.say("done. Matrix size is {:,}".format(
+            len(word_embedding_matrix))
+        )
+        return word_embedding_matrix
 
     def __convert_words_to_vectors(self, words_to_vectors, reviews_summaries):
         '''Convert words in text to an integer.
@@ -189,14 +215,14 @@ class KerasWordVectorizer:
         for word in word_vectors:
             if word == words_to_vectors["<UNK>"]:
                 num_unknown_words += 1
-        self.say("done")
+        self.say("done. {:,} found".format(num_unknown_words))
         return num_unknown_words
 
     def __sort_summaries(self,
-        summaries_word_vectors,
-        reviews_word_vectors,
-        words_to_vectors
-    ):
+                         summaries_word_vectors,
+                         reviews_word_vectors,
+                         words_to_vectors
+                         ):
         self.say("  Sorting summaries... ")
         sorted_summary_vectors = []
         sorted_review_vectors = []
@@ -215,17 +241,19 @@ class KerasWordVectorizer:
         for length in range(
             min(reviews_lengths), self.MAX_REVIEW_LENGTH
         ):
-            for count, words in enumerate(summaries_word_vectors):
-                summary_word_vectors = summaries_word_vectors[count]
-                review_word_vectors = reviews_word_vectors[count]
+            for vector, words in enumerate(summaries_word_vectors):
+                summary_word_vectors = summaries_word_vectors[vector]
+                review_word_vectors = reviews_word_vectors[vector]
                 num_summary_word_vectors = len(summary_word_vectors)
                 num_review_word_vectors = len(review_word_vectors)
 
                 if (num_summary_word_vectors >= self.MIN_SUMMARY_LENGTH and
                         num_summary_word_vectors <= self.MAX_SUMMARY_LENGTH and
                         num_review_word_vectors >= self.MIN_REVIEW_LENGTH and
-                        num_unknown_summary_words <= self.MIN_UNKNOWN_SUMMARY_WORDS and
-                        num_unknown_review_words <= self.MIN_UNKNOWN_REVIEW_WORDS and
+                        num_unknown_summary_words <=
+                    self.MIN_UNKNOWN_SUMMARY_WORDS and
+                        num_unknown_review_words <=
+                    self.MIN_UNKNOWN_REVIEW_WORDS and
                         length == num_review_word_vectors):
                     sorted_summary_vectors.append(summary_word_vectors)
                     sorted_review_vectors.append(review_word_vectors)
@@ -234,14 +262,19 @@ class KerasWordVectorizer:
             "summaries": sorted_summary_vectors,
             "reviews": sorted_review_vectors
         }
-        self.say("done")
+        self.say("done. {:,} reviews found".format(len(result["reviews"])))
         return result
 
     def say(self, message, end="\n"):
         if self.in_verbose_mode is True:
             if self.do_print_verbose_header is True:
+                current_time = datetime.now().strftime('%H:%M:%S')
                 print(
-                    "[{}]: {}".format(self.__class__.__name__, message),
+                    "[{}|{}]: {}".format(
+                        current_time,
+                        self.__class__.__name__,
+                        message
+                    ),
                     end=end
                 )
             else:

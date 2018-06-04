@@ -1,6 +1,8 @@
 from .KerasReviewSummarizer import KerasReviewSummarizer
 import pickle
 import gzip
+from datetime import datetime
+
 
 class KerasReviewSummarizerManager:
     in_verbose_mode = False
@@ -56,8 +58,13 @@ class KerasReviewSummarizerManager:
     def say(self, message, end="\n"):
         if self.in_verbose_mode is True:
             if self.do_print_verbose_header is True:
+                current_time = datetime.now().strftime('%H:%M:%S')
                 print(
-                    "[{}]: {}".format(self.__class__.__name__, message),
+                    "[{}|{}]: {}".format(
+                        current_time,
+                        self.__class__.__name__,
+                        message
+                    ),
                     end=end
                 )
             else:

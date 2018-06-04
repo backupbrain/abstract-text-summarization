@@ -3,7 +3,7 @@ import tensorflow as tf
 from tensorflow.python.layers.core import Dense
 import numpy as np
 from .zero_state_tensors_patch import _zero_state_tensors
-
+from datetime import datetime
 
 class KerasReviewSummarizer:
     in_verbose_mode = False

@@ -2,6 +2,7 @@ import pandas as pd
 import re
 from nltk.corpus import stopwords
 from .nltk_english_contractions import contraction_list
+from datetime import datetime
 
 
 class DataPreprocessor:
@@ -25,6 +26,7 @@ class DataPreprocessor:
         data = data.dropna()
         if isinstance(headers, type([])):
             data = data.drop(headers, 1)
+        data = data.reset_index(drop=True)
         self.say("  New size: {}".format(str(data.shape)))
         self.say("Done")
         return data
@@ -75,7 +77,7 @@ class DataPreprocessor:
         self.say("done")
         self.say("  Cleaning reviews... ", "")
         reviews = [
-            self.clean_text(review, remove_stopwords=False)
+            self.clean_text(review)
             for review in raw_summaries.Text
         ]
         self.say("done")
@@ -88,26 +90,16 @@ class DataPreprocessor:
         self.say("Done")
         return cleaned_reviews_summaries
 
-    def clean_summaries(self, data):
-        # Clean the summaries and texts
-        clean_summaries = []
-        for summary in data.Summary:
-            clean_summaries.append(
-                self.clean_text(summary, remove_stopwords=False)
-            )
-        print("Summaries are complete.")
-
-    def clean_source_text(self, data):
-        clean_texts = []
-        for text in data.Text:
-            clean_texts.append(self.clean_text(text))
-        print("Texts are complete.")
-
     def say(self, message, end="\n"):
         if self.in_verbose_mode is True:
             if self.do_print_verbose_header is True:
+                current_time = datetime.now().strftime('%H:%M:%S')
                 print(
-                    "[{}]: {}".format(self.__class__.__name__, message),
+                    "[{}|{}]: {}".format(
+                        current_time,
+                        self.__class__.__name__,
+                        message
+                    ),
                     end=end
                 )
             else:
