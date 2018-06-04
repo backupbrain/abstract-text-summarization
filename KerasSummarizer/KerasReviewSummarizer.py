@@ -354,7 +354,9 @@ class KerasReviewSummarizer:
                 embedding = np.asarray(values[1:], dtype='float32')
                 self.embeddings_index[word] = embedding
         self.say("done")
-        self.__build_word_embeddings_matrix(self.words_to_vectors)
+        word_embedding_matrix = self.__build_word_embeddings_matrix(
+            self.words_to_vectors
+        )
 
     def __build_word_embeddings_matrix(self, words_to_vectors):
         self.say("Building word embeddings matrix... ", "")
@@ -376,8 +378,8 @@ class KerasReviewSummarizer:
                 word_embedding_matrix[i] = new_embedding
         # Check if value matches len(words_to_vectors)
         # print(len(word_embedding_matrix))
-        return word_embedding_matrix
         self.say("done")
+        return word_embedding_matrix
 
 
         embedding_dim = 300
