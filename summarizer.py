@@ -38,7 +38,7 @@ def main():
 
     # try:
     word_vectors, words_to_vectors, word_embeddings = \
-        summarizer_manager.load_data_from_file(
+        summarizer_manager.load_data_from_prefix(
             command_arguments.load_prefix
         )
     summarizer_manager.load_summarizer(

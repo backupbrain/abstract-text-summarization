@@ -35,9 +35,12 @@ class KerasReviewSummarizerManager:
         self.say("Done")
 
     def build_model(self):
+        self.say("Building model...")
         self.keras_summarizer.build_graph()
+        self.say("Done")
 
     def load_data_from_prefix(self, file_prefix):
+        self.say("Loading data files... ", "")
         text_vectors_filename = "{}{}".format(
             file_prefix,
             self.TEXT_VECTORS_FILE
@@ -62,6 +65,7 @@ class KerasReviewSummarizerManager:
         file = gzip.open(word_embeddings_filename, 'rb')
         word_embeddings = pickle.load(file)
         file.close()
+        self.say("done")
         return text_vectors, words_to_vectors, word_embeddings
 
     def test_file(self, filename, mode='r'):
