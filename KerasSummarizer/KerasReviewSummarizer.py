@@ -359,12 +359,12 @@ class KerasReviewSummarizer:
     def __build_word_embeddings_matrix(self, words_to_vectors):
         self.say("Building word embeddings matrix... ", "")
         embedding_dim = 300
-        num_words = len(vocab_to_int)
+        num_words = len(words_to_vectors)
         self.word_embdding_matrix = np.zeros(
             (num_words, embedding_dim),
             dtype=np.float32
         )
-        for word, i in vocab_to_int.items():
+        for word, i in words_to_vectors.items():
             if word in self.embeddings_index:
                 self.word_embedding_matrix[i] = self.embeddings_index[word]
             else:
@@ -729,8 +729,13 @@ class KerasReviewSummarizer:
     def say(self, message, end="\n"):
         if self.in_verbose_mode is True:
             if self.do_print_verbose_header is True:
+                current_time = datetime.now().strftime('%H:%M:%S')
                 print(
-                    "[{}]: {}".format(self.__class__.__name__, message),
+                    "[{}|{}]: {}".format(
+                        current_time,
+                        self.__class__.__name__,
+                        message
+                    ),
                     end=end
                 )
             else:
