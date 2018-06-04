@@ -66,42 +66,51 @@ $ sudo cp numberbatch-en-17.02.txt /tmp/numberbatchramdisk
 The first step is to convert the Amazon reviews data into word vectors. This only needs to be done once each time there is a new data set.
 
 ```
-$./build_word_vectors.py /path/to/numberbatch-en-17.02.txt /path/to/Reviews.csv /path/to/save_text_word_vectors.pklz /path/to/save_word_vector_lookup.pklz --verbose
+$./build_word_vectors.py /path/to/numberbatch-en-17.02.txt /path/to/Reviews.csv /path/to/save_prefix_ --verbose
 ```
 
 Example output:
 
 ```
-[KerasWordVectorizerManager]: In verbose mode
-[KerasWordVectorizerManager]: Building word vectors
-[DataPreprocessor]: In verbose mode
-[DataPreprocessor]: Loading nltk and pandas...
-[DataPreprocessor]: Loading CSV file: 'Reviews.csv'... done
-[DataPreprocessor]: Dropping unwanted columns
-[DataPreprocessor]:   Original size: (568454, 10)
-[DataPreprocessor]:   New size: (568411, 2)
-[DataPreprocessor]: Done
-[DataPreprocessor]: Cleaning reviews and summaries...
-[DataPreprocessor]:   Cleaning summaries... done
-[DataPreprocessor]:   Cleaning reviews... done
-[DataPreprocessor]: Done
-[KerasWordVectorizer]: In verbose mode
-[KerasWordVectorizer]: Loading tensorflow and numpy...
-[KerasWordVectorizer]: Loading embeddings file 'numberbatch-en-17.02.txt'... done
-[KerasWordVectorizer]: Loading vectors from data pairs...
-[KerasWordVectorizer]:   Counting word occurrences... done. Max 568,410.
-[KerasWordVectorizer]:   Creating word vector table...done. Found 6 words
-[KerasWordVectorizer]:   Creating word embedding matrix...Done
-[KerasWordVectorizer]:   Loading word vectors...  done. Found 48,408,060 unknown words (99.96%).
-[KerasWordVectorizer]:   Sorting summaries... 
-[KerasWordVectorizer]:     Counting words... done
-[KerasWordVectorizer]:    Counting unknown words... done
-[KerasWordVectorizer]:    Counting unknown words... done
-[KerasWordVectorizer]:   Sorting... done
-[KerasWordVectorizer]: Done loading vectors
-[KerasWordVectorizerManager]: Done
-[KerasWordVectorizerManager]: Saving data to 'save_text_word_vectors.pklz'... done
-[KerasWordVectorizerManager]: Saving data to 'save_word_vector_lookup.pklz'... done
+[16:06:11|KerasWordVectorizerManager]: In verbose mode
+[16:06:11|DataPreprocessor]: In verbose mode
+[16:06:11|DataPreprocessor]: Loading nltk and pandas...
+[16:06:11|KerasWordVectorizerManager]: Loading data
+[16:06:11|DataPreprocessor]: Loading CSV file: '/path/to/Reviews.csv'... done
+[16:06:15|DataPreprocessor]: Dropping unwanted columns
+[16:06:15|DataPreprocessor]:   Original size: (568454, 10)
+[16:06:16|DataPreprocessor]:   New size: (568411, 2)
+[16:06:16|DataPreprocessor]: Done
+[16:06:16|DataPreprocessor]: Cleaning reviews and summaries...
+[16:06:16|DataPreprocessor]:   Cleaning summaries... done
+[16:06:21|DataPreprocessor]:   Cleaning reviews... done
+[16:08:41|DataPreprocessor]: Done
+[16:08:41|KerasWordVectorizerManager]: Done
+[16:08:41|KerasWordVectorizerManager]: Building word vectors... 
+[16:08:41|KerasWordVectorizer]: In verbose mode
+[16:08:41|KerasWordVectorizer]: Loading tensorflow and numpy...
+[16:08:41|KerasWordVectorizer]: Loading embeddings file '/path/to/numberbatch-en-17.02.txt'... done. 484557 word embeddings.
+[16:09:17|KerasWordVectorizer]: Loading vectors from data pairs...
+[16:09:17|KerasWordVectorizer]:   Counting word occurrences... done. 132,884 words.
+[16:09:26|KerasWordVectorizer]:   Found 3,044 unknown words (0%)
+[16:09:26|KerasWordVectorizer]:   Creating word vector table... done. Found 65,469 words
+[16:09:26|KerasWordVectorizerManager]: Done
+[16:09:26|KerasWordVectorizerManager]: Creating word embedding matrix... 
+[16:09:26|KerasWordVectorizer]:   Creating word embedding matrix... done. Matrix size is 65,469
+[16:09:26|KerasWordVectorizerManager]: Done
+[16:09:26|KerasWordVectorizerManager]: Getting review summary word vectors...
+[16:09:26|KerasWordVectorizer]: Getting review summary word vectors...
+[16:09:26|KerasWordVectorizer]:   Loading word vectors...  done. Found 170,450 unknown words (0.66%).
+[16:09:47|KerasWordVectorizer]:   Sorting summaries... 
+[16:09:47|KerasWordVectorizer]:     Counting words... done
+[16:09:47|KerasWordVectorizer]:     Counting unknown words... done. 0 found
+[16:09:49|KerasWordVectorizer]:     Counting unknown words... done. 0 found
+[16:09:49|KerasWordVectorizer]:   Sorting... done. 828,529 reviews found
+[16:11:49|KerasWordVectorizer]: Done loading vectors
+[16:11:50|KerasWordVectorizerManager]: Done
+[16:11:50|KerasWordVectorizerManager]: Saving data to '/path/to/save_prefix_text_vectors.pklz'... done
+[16:11:57|KerasWordVectorizerManager]: Saving data to '/path/to/save_prefix_word_vectors.pklz'... done
+[16:11:57|KerasWordVectorizerManager]: Saving data to '/path/to/save_prefix_embeddings.pklz'... done
 ```
 
 The next step is to train the machine learning model.
