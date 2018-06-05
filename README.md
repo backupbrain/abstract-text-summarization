@@ -116,5 +116,11 @@ Example output:
 The next step is to train the machine learning model.
 
 ```
-$ ./summarizer.py /path/to/numberbatch-en-17.02.txt /path/to/data_prefix --verbose
+$ ./train.py /path/to/numberbatch-en-17.02.txt /path/to/data_prefix --verbose
+```
+
+To run, execute like this:
+
+```
+$ ./summarizer.py /path/to/numberbatch-en-17.02.txt /path/to/reviews.csv /path/to/data_prefix --verbose
 ```
