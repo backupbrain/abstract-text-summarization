@@ -4,6 +4,7 @@ from tensorflow.python.layers.core import Dense
 import numpy as np
 from tensorflow.python.ops.rnn_cell_impl import _zero_state_tensors
 from datetime import datetime
+from .DataPreprocessor import DataPreprocessor
 
 
 class KerasReviewSummarizer:
@@ -551,8 +552,8 @@ class KerasReviewSummarizer:
 
     def text_to_seq(self, text, vocab_to_int):
         '''Prepare the text for the model'''
-
-        text = self.clean_text(text)
+        data_preprocessor = DataPreprocessor(self.in_verbose_mode)
+        text = data_preprocessor.clean_text(text)
         result = [
             vocab_to_int.get(word, vocab_to_int['<UNK>'])
             for word in text.split()
