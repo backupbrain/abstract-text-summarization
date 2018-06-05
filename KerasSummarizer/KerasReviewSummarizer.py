@@ -470,7 +470,7 @@ class KerasReviewSummarizer:
         self.say("  Training encoding layer... ", "")
         training_helper = tf.contrib.seq2seq.TrainingHelper(
             inputs=dec_embed_input,
-            sequence_length=self.summary_length,
+            sequence_length=summary_length,
             time_major=False
         )
         training_decoder = tf.contrib.seq2seq.BasicDecoder(
@@ -483,7 +483,7 @@ class KerasReviewSummarizer:
             training_decoder,
             output_time_major=False,
             impute_finished=True,
-            maximum_iterations=self.max_summary_length
+            maximum_iterations=max_summary_length
         )
         self.say("done")
         return training_logits
