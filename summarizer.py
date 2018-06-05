@@ -47,7 +47,7 @@ def main():
         command_arguments.embeddings_file
     )
     model = summarizer_manager.initialize_model()
-    train_graph = summarizer_manager.build_graph()
+    train_graph = summarizer_manager.build_graph(model)
 
     output_filename = "{}train_data.meta".format(
         command_arguments.load_prefix
