@@ -116,5 +116,5 @@ Example output:
 The next step is to train the machine learning model.
 
 ```
-$ ./summarizer.py /path/to/numberbatch-en-17.02.txt /path/to/text_word_vectors.pklz /path/to/word_vector_lookup.pklz --verbose
+$ ./summarizer.py /path/to/numberbatch-en-17.02.txt /path/to/data_prefix --verbose
 ```

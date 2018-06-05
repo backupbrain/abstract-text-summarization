@@ -101,7 +101,7 @@ class KerasReviewSummarizer:
         with train_graph.as_default():
             # Create the training and inference logits
             self.training_logits, self.inference_logits = self.__seq2seq_model(
-                model["targets"],
+                model["input_data"],
                 model["keep_probability"],
                 model["text_length"],
                 model["summary_length"],
