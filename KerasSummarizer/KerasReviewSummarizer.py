@@ -1,8 +1,7 @@
 import tensorflow as tf
-# import time
+import time
 from tensorflow.python.layers.core import Dense
 import numpy as np
-#from .zero_state_tensors_patch import _zero_state_tensors
 from tensorflow.python.ops.rnn_cell_impl import _zero_state_tensors
 from datetime import datetime
 
@@ -14,6 +13,8 @@ class KerasReviewSummarizer:
     word_embedding_matrix = None
     word_vectors = None
     words_to_vectors = None
+    batch_size = 64
+    epochs = 100
 
     def __init__(
         self,
@@ -85,8 +86,6 @@ class KerasReviewSummarizer:
     def build_graph(self):
         self.say("Building graph...")
         words_to_vectors = self.words_to_vectors
-        # epochs = 100
-        batch_size = 64
         rnn_size = 256
         num_layers = 2
         learning_rate = 0.005
@@ -99,7 +98,7 @@ class KerasReviewSummarizer:
             model = self.__initialize_model()
 
             # Create the training and inference logits
-            training_logits, inference_logits = self.__seq2seq_model(
+            self.training_logits, self.inference_logits = self.__seq2seq_model(
                 model["targets"],
                 model["keep_probability"],
                 model["text_length"],
@@ -110,20 +109,20 @@ class KerasReviewSummarizer:
                 rnn_size,
                 num_layers,
                 words_to_vectors,
-                batch_size
+                self.batch_size
             )
 
             # Create tensors for the training logits and inference logits
-            training_logits = tf.identity(
-                training_logits.rnn_output,
+            self.training_logits = tf.identity(
+                self.training_logits.rnn_output,
                 'logits'
             )
-            inference_logits = tf.identity(
-                inference_logits.sample_id,
+            self.inference_logits = tf.identity(
+                self.inference_logits.sample_id,
                 name='predictions'
             )
             # Create the weights for sequence_loss
-            masks = tf.sequence_mask(
+            self.masks = tf.sequence_mask(
                 model["summary_length"],
                 model["max_summary_length"],
                 dtype=tf.float32,
@@ -131,23 +130,33 @@ class KerasReviewSummarizer:
             )
             with tf.name_scope("optimization"):
                 # Loss function
-                cost = tf.contrib.seq2seq.sequence_loss(
-                    training_logits,
+                self.cost = tf.contrib.seq2seq.sequence_loss(
+                    self.training_logits,
                     model["targets"],
-                    masks
+                    self.masks
                 )
                 # Optimizer
-                optimizer = tf.train.AdamOptimizer(learning_rate)
+                self.optimizer = tf.train.AdamOptimizer(learning_rate)
                 # Gradient Clipping
-                gradients = optimizer.compute_gradients(cost)
-                capped_gradients = [
+                self.gradients = self.optimizer.compute_gradients(self.cost)
+                self.capped_gradients = [
                     (tf.clip_by_value(grad, -5., 5.), var)
-                    for grad, var in gradients if grad is not None
+                    for grad, var in self.gradients if grad is not None
                 ]
-                train_op = optimizer.apply_gradients(capped_gradients)
+                self.train_op = self.optimizer.apply_gradients(
+                    self.capped_gradients
+                )
+        return train_graph
         self.say("Done")
 
-    def train(self, output_filename):
+    def train(
+        self,
+        sorted_summaries,
+        sorted_texts,
+        train_graph,
+        model,
+        output_filename
+    ):
         # Since I am training this model on my MacBook Pro,
         # it would take me days if I used the whole dataset.
         # For this reason, I am only going to use a subset of the data,
@@ -174,38 +183,40 @@ class KerasReviewSummarizer:
         # Train the Model
         learning_rate_decay = 0.95
         min_learning_rate = 0.0005
-        display_step = 20 # Check training loss after every 20 batches
+        display_step = 20  # Check training loss after every 20 batches
         stop_early = 0
-        stop = 3  # If the update loss does not decrease in 3 consecutive update checks, stop training
+        stop = 3   # If update loss does not decrease in 3 update checks, stop
         per_epoch = 3  # Make 3 update checks per epoch
-        update_check = (len(sorted_texts_short)//batch_size//per_epoch)-1
+        update_check = (len(sorted_texts_short)//self.batch_size//per_epoch)-1
 
         update_loss = 0
         batch_loss = 0
-        summary_update_loss = []  # Record the update losses for saving improvements in the model
+        summary_update_loss = []  # Record  update losses to improvements
 
         with tf.Session(graph=train_graph) as sess:
             sess.run(tf.global_variables_initializer())
 
             # If we want to continue training a previous session
-            # loader = tf.train.import_meta_graph("./" + output_filename + '.meta')
+            # loader = tf.train.import_meta_graph(
+            #    "./" + output_filename + '.meta'
+            # )
             # loader.restore(sess, output_filename)
 
-            for epoch_i in range(1, epochs+1):
+            for epoch_i in range(1, self.epochs+1):
                 update_loss = 0
                 batch_loss = 0
                 for batch_i, (summaries_batch, texts_batch, summaries_lengths, texts_lengths) in enumerate(
-                        get_batches(sorted_summaries_short, sorted_texts_short, batch_size)):
+                        self.__get_batches(sorted_summaries_short, sorted_texts_short, self.batch_size)):
                     start_time = time.time()
                     _, loss = sess.run(
-                        [train_op, cost],
+                        [self.train_op, self.cost],
                         {
-                            input_data: texts_batch,
-                            targets: summaries_batch,
-                            learning_rate: learning_rate,
-                            summary_length: summaries_lengths,
-                            text_length: texts_lengths,
-                            keep_prob: keep_probability
+                            model["input_data"]: texts_batch,
+                            model["targets"]: summaries_batch,
+                            model["learning_rate"]: learning_rate,
+                            model["summary_length"]: summaries_lengths,
+                            model["text_length"]: texts_lengths,
+                            model["keep_probability"]: keep_probability
                          }
                     )
 
@@ -215,13 +226,15 @@ class KerasReviewSummarizer:
                     batch_time = end_time - start_time
 
                     if batch_i % display_step == 0 and batch_i > 0:
-                        self.say('Epoch {:>3}/{} Batch {:>4}/{} - Loss: {:>6.3f}, Seconds: {:>4.2f}'
-                              .format(epoch_i,
-                                      epochs,
-                                      batch_i,
-                                      len(sorted_texts_short) // batch_size,
-                                      batch_loss / display_step,
-                                      batch_time*display_step))
+                        self.say("""Epoch {:>3}/{} Batch {:>4}/{}
+                                - Loss: {:>6.3f}, Seconds: {:>4.2f}""".format(
+                                    epoch_i,
+                                    self.epochs,
+                                    batch_i,
+                                    len(sorted_texts_short) // self.batch_size,
+                                    batch_loss / display_step,
+                                    batch_time*display_step
+                        ))
                         batch_loss = 0
 
                     if batch_i % update_check == 0 and batch_i > 0:
@@ -254,6 +267,7 @@ class KerasReviewSummarizer:
                 if stop_early == stop:
                     self.say("Stopping Training.")
                     break
+
     '''
     def summarize(self, model_filename):
         # Create your own review or use one from the dataset
@@ -671,20 +685,7 @@ class KerasReviewSummarizer:
         self.say("Done building Sequence 2 Sequence model")
         return training_logits, inference_logits
 
-    '''
-    def __pad_sentence_batch(sentence_batch):
-        """
-        Pad sentences with <PAD>
-        so that each sentence of a batch has the same length
-        """
-        max_sentence = max([len(sentence) for sentence in sentence_batch])
-        result = [
-            sentence + [words_to_vectors['<PAD>']] * (max_sentence - len(sentence))
-            for sentence in sentence_batch
-        ]
-        return result
-
-    def __get_batches(summaries, texts, batch_size):
+    def __get_batches(self, summaries, texts, batch_size):
         """
         Batch summaries, texts, and the lengths of their sentences together
         """
@@ -692,8 +693,10 @@ class KerasReviewSummarizer:
             start_i = batch_i * batch_size
             summaries_batch = summaries[start_i:start_i + batch_size]
             texts_batch = texts[start_i:start_i + batch_size]
-            pad_summaries_batch = np.array(pad_sentence_batch(summaries_batch))
-            pad_texts_batch = np.array(pad_sentence_batch(texts_batch))
+            pad_summaries_batch = np.array(
+                self.__pad_sentence_batch(summaries_batch)
+            )
+            pad_texts_batch = np.array(self.__pad_sentence_batch(texts_batch))
 
             # Need the lengths for the _lengths parameters
             pad_summaries_lengths = []
@@ -705,7 +708,18 @@ class KerasReviewSummarizer:
                 pad_texts_lengths.append(len(text))
 
             yield pad_summaries_batch, pad_texts_batch, pad_summaries_lengths, pad_texts_lengths
-    '''
+
+    def __pad_sentence_batch(self, sentence_batch):
+        """
+        Pad sentences with <PAD>
+        so that each sentence of a batch has the same length
+        """
+        max_sentence = max([len(sentence) for sentence in sentence_batch])
+        result = [
+            sentence + [words_to_vectors['<PAD>']] * (max_sentence - len(sentence))
+            for sentence in sentence_batch
+        ]
+        return result
 
     def say(self, message, end="\n"):
         if self.in_verbose_mode is True:
