@@ -34,7 +34,7 @@ class KerasReviewSummarizerManager:
         )
         self.say("Done")
 
-    def initialize_model(self, model):
+    def initialize_model(self):
         self.say("Building model...")
         self.keras_summarizer.initialize_model()
         self.say("Done")
