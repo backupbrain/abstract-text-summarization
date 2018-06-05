@@ -371,6 +371,16 @@ class KerasReviewSummarizer:
             model = self.get_model_inputs()
 
             print(tf.reverse(model["input_data"], [-1]))
+            print(model["targets"])
+            print(model["keep_probability"])
+            print(model["text_length"])
+            print(model["summary_length"])
+            print(model["text_length"])
+            print(model["max_summary_length"])
+            print(len(vocab_to_int) + 1)
+            print(self.rnn_size)
+            print(self.num_layers)
+            print(self.batch_size)
 
             return True
             # Create the training and inference logits
