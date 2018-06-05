@@ -19,31 +19,17 @@ class KerasReviewSummarizerManager:
         self.in_verbose_mode = in_verbose_mode
         self.say("In verbose mode")
 
-    def load_summarizer(
-        self,
-        word_vectors,
-        words_to_vectors,
-        embeddings_index_filename
-    ):
-        self.say("Loading KerasReviewSummarizer...")
+    def train(self):
         self.keras_summarizer = KerasReviewSummarizer(
-            word_vectors=word_vectors,
-            words_to_vectors=words_to_vectors,
-            embeddings_index_filename=embeddings_index_filename,
-            in_verbose_mode=self.in_verbose_mode
+            word_embeddings,
+            in_verbose_mode=True
         )
-        self.say("Done")
-
-    def initialize_model(self):
-        self.say("Building model...")
-        model = self.keras_summarizer.initialize_model()
-        return model
-        self.say("Done")
-
-    def build_graph(self, model, words_to_vectors):
-        self.say("Building graph...")
-        train_graph =self.keras_summarizer.build_graph(model, words_to_vectors)
-        return train_graph
+        self.say("Training...")
+        self.keras_summarizer.train(
+            word_vectors["reviews"],
+            word_vectors["summaries"],
+            vocab_to_int
+        )
         self.say("Done")
 
     def load_data_from_prefix(self, file_prefix):

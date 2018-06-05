@@ -41,14 +41,8 @@ def main():
         summarizer_manager.load_data_from_prefix(
             command_arguments.load_prefix
         )
-    summarizer_manager.load_summarizer(
-        word_vectors,
-        words_to_vectors,
-        command_arguments.embeddings_file
-    )
-    model = summarizer_manager.initialize_model()
-    training_graph = summarizer_manager.build_graph(model, words_to_vectors)
-
+    summarizer_manager.train()
+    '''
     output_filename = "{}train_data.meta".format(
         command_arguments.load_prefix
     )
@@ -61,6 +55,7 @@ def main():
         words_to_vectors,
         output_filename
     )
+    '''
     # except Exception as e:
     #     sys.exit("Error: {}".format(str(e)))
 
