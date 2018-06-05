@@ -95,15 +95,15 @@ class KerasReviewSummarizer:
         train_graph = tf.Graph()
         # Set the graph to default to ensure that it is ready for training
         with train_graph.as_default():
-            self.__initialize_model()
+            model = self.__initialize_model()
 
             # Create the training and inference logits
             training_logits, inference_logits = self.__seq2seq_model(
-                self.targets,
-                self.keep_prob,
-                self.summary_length,
-                self.max_summary_length,
-                tf.reverse(self.input_data, [-1]),
+                model["targets"],
+                model["keep_probability"],
+                model["summary_length"],
+                model[".max_summary_length"],
+                tf.reverse(model["input_data"], [-1]),
                 len(words_to_vectors)+1,
                 rnn_size,
                 num_layers,
@@ -122,8 +122,8 @@ class KerasReviewSummarizer:
             )
             # Create the weights for sequence_loss
             masks = tf.sequence_mask(
-                self.summary_length,
-                self.max_summary_length,
+                model["summary_length"],
+                model["max_summary_length"],
                 dtype=tf.float32,
                 name='masks'
             )
@@ -131,7 +131,7 @@ class KerasReviewSummarizer:
                 # Loss function
                 cost = tf.contrib.seq2seq.sequence_loss(
                     training_logits,
-                    self.targets,
+                    model["targets"],
                     masks
                 )
                 # Optimizer
