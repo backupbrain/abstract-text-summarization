@@ -21,7 +21,7 @@ class KerasReviewSummarizerManager:
         self.in_verbose_mode = in_verbose_mode
         self.say("In verbose mode")
 
-    def get_cleaned_reviews(self, filename):
+    def get_cleaned_reviews(self, filename, num_reviews=None):
         data_preprocessor = DataPreprocessor(self.in_verbose_mode)
         reviews_summaries = data_preprocessor.load_data_from_csv(filename)
         unwanted_headers = [
