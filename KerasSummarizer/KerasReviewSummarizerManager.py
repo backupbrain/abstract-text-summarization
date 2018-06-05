@@ -19,7 +19,7 @@ class KerasReviewSummarizerManager:
         self.in_verbose_mode = in_verbose_mode
         self.say("In verbose mode")
 
-    def train(self):
+    def train(self, word_embeddings, word_vectors, words_to_vectors):
         self.keras_summarizer = KerasReviewSummarizer(
             word_embeddings,
             in_verbose_mode=True
@@ -28,7 +28,7 @@ class KerasReviewSummarizerManager:
         self.keras_summarizer.train(
             word_vectors["reviews"],
             word_vectors["summaries"],
-            vocab_to_int
+            words_to_vectors
         )
         self.say("Done")
 
