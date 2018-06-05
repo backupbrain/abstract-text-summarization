@@ -97,56 +97,56 @@ class KerasReviewSummarizer:
         # Build the graph
         train_graph = tf.Graph()
         # Set the graph to default to ensure that it is ready for training
-        with train_graph.as_default():
-            # Create the training and inference logits
-            self.training_logits, self.inference_logits = self.__seq2seq_model(
-                tf.reverse(model["input_data"], [-1]),
-                model["targets"],
-                model["keep_probability"],
-                model["text_length"],
-                model["summary_length"],
-                model["max_summary_length"],
-                len(words_to_vectors)+1,
-                self.rnn_size,
-                self.num_layers,
-                words_to_vectors,
-                self.batch_size
-            )
+        #with train_graph.as_default():
+        # Create the training and inference logits
+        self.training_logits, self.inference_logits = self.__seq2seq_model(
+            tf.reverse(model["input_data"], [-1]),
+            model["targets"],
+            model["keep_probability"],
+            model["text_length"],
+            model["summary_length"],
+            model["max_summary_length"],
+            len(words_to_vectors)+1,
+            self.rnn_size,
+            self.num_layers,
+            words_to_vectors,
+            self.batch_size
+        )
 
-            # Create tensors for the training logits and inference logits
-            self.training_logits = tf.identity(
-                self.training_logits.rnn_output,
-                'logits'
+        # Create tensors for the training logits and inference logits
+        self.training_logits = tf.identity(
+            self.training_logits.rnn_output,
+            'logits'
+        )
+        self.inference_logits = tf.identity(
+            self.inference_logits.sample_id,
+            name='predictions'
+        )
+        # Create the weights for sequence_loss
+        self.masks = tf.sequence_mask(
+            model["summary_length"],
+            model["max_summary_length"],
+            dtype=tf.float32,
+            name='masks'
+        )
+        with tf.name_scope("optimization"):
+            # Loss function
+            self.cost = tf.contrib.seq2seq.sequence_loss(
+                self.training_logits,
+                model["targets"],
+                self.masks
             )
-            self.inference_logits = tf.identity(
-                self.inference_logits.sample_id,
-                name='predictions'
+            # Optimizer
+            self.optimizer = tf.train.AdamOptimizer(self.learning_rate)
+            # Gradient Clipping
+            self.gradients = self.optimizer.compute_gradients(self.cost)
+            self.capped_gradients = [
+                (tf.clip_by_value(grad, -5., 5.), var)
+                for grad, var in self.gradients if grad is not None
+            ]
+            self.train_op = self.optimizer.apply_gradients(
+                self.capped_gradients
             )
-            # Create the weights for sequence_loss
-            self.masks = tf.sequence_mask(
-                model["summary_length"],
-                model["max_summary_length"],
-                dtype=tf.float32,
-                name='masks'
-            )
-            with tf.name_scope("optimization"):
-                # Loss function
-                self.cost = tf.contrib.seq2seq.sequence_loss(
-                    self.training_logits,
-                    model["targets"],
-                    self.masks
-                )
-                # Optimizer
-                self.optimizer = tf.train.AdamOptimizer(self.learning_rate)
-                # Gradient Clipping
-                self.gradients = self.optimizer.compute_gradients(self.cost)
-                self.capped_gradients = [
-                    (tf.clip_by_value(grad, -5., 5.), var)
-                    for grad, var in self.gradients if grad is not None
-                ]
-                self.train_op = self.optimizer.apply_gradients(
-                    self.capped_gradients
-                )
         return train_graph
         self.say("Done")
 
@@ -474,6 +474,7 @@ class KerasReviewSummarizer:
                     sequence_length,
                     dtype=tf.float32
                 )
+
         # Join outputs since we are using a bidirectional RNN
         enc_output = tf.concat(enc_output, 2)
         self.say("done")
