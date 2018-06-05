@@ -552,13 +552,12 @@ class KerasReviewSummarizer:
     # You can set the length of the summary to a fixed value,
     # or use a random value like I have here.
 
-    def text_to_seq(self, text, vocab_to_int):
+    def text_to_seq(self, text, vocab_to_int, int_to_vocab):
         '''Prepare the text for the model'''
-        print(vocab_to_int["<UNK>"])
         data_preprocessor = DataPreprocessor(self.in_verbose_mode)
         text = data_preprocessor.clean_text(text)
         result = [
-            vocab_to_int.get(word, vocab_to_int['<UNK>'])
+            vocab_to_int.get(word, int_to_vocab['<UNK>'])
             for word in text.split()
         ]
         return result
@@ -571,7 +570,7 @@ class KerasReviewSummarizer:
         # text = text_to_seq(input_sentence)
         random = np.random.randint(0, len(clean_texts))
         input_sentence = clean_texts[random]
-        text = self.text_to_seq(clean_texts[random], vocab_to_int)
+        text = self.text_to_seq(clean_texts[random], vocab_to_int, int_to_vocab)
 
         checkpoint = "./best_model.ckpt"
 
