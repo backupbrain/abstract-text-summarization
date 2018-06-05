@@ -10,6 +10,8 @@ from .DataPreprocessor import DataPreprocessor
 class KerasReviewSummarizer:
     in_verbose_mode = False
     do_print_verbose_header = True
+    
+    TEXT_CODES = ["<UNK>", "<PAD>", "<EOS>", "<GO>"]
 
     word_embedding_matrix = None
     epochs = 100
