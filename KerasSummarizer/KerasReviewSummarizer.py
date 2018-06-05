@@ -567,7 +567,7 @@ class KerasReviewSummarizer:
         # text = text_to_seq(input_sentence)
         random = np.random.randint(0, len(clean_texts))
         input_sentence = clean_texts[random]
-        text = self.text_to_seq(clean_texts[random])
+        text = self.text_to_seq(clean_texts[random], vocab_to_int)
 
         checkpoint = "./best_model.ckpt"
 
