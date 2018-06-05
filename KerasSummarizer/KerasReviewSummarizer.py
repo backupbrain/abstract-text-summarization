@@ -54,7 +54,7 @@ class KerasReviewSummarizer:
         }
         return model_inputs
 
-    def process_encoding_input(self, target_data, vocab_to_int, batch_size):
+    def process_encoding_input(self, target_data, words_to_vectors, batch_size):
         '''
         Remove the last word id from each batch and
         concat the <GO> to the begining of each batch
@@ -66,7 +66,7 @@ class KerasReviewSummarizer:
             [1, 1]
         )
         dec_input = tf.concat(
-            [tf.fill([batch_size, 1], vocab_to_int['<GO>']), ending],
+            [tf.fill([batch_size, 1], words_to_vectors['<GO>']), ending],
             1
         )
         return dec_input
@@ -195,7 +195,7 @@ class KerasReviewSummarizer:
         summary_length,
         max_summary_length,
         rnn_size,
-        vocab_to_int,
+        words_to_vectors,
         keep_prob,
         batch_size,
         num_layers
@@ -255,8 +255,8 @@ class KerasReviewSummarizer:
         with tf.variable_scope("decode", reuse=True):
             inference_logits = self.inference_decoding_layer(
                 embeddings,
-                vocab_to_int['<GO>'],
-                vocab_to_int['<EOS>'],
+                words_to_vectors['<GO>'],
+                words_to_vectors['<EOS>'],
                 dec_cell,
                 initial_state,
                 output_layer,
@@ -276,7 +276,7 @@ class KerasReviewSummarizer:
         vocab_size,
         rnn_size,
         num_layers,
-        vocab_to_int,
+        words_to_vectors,
         batch_size
     ):
         '''Use the previous functions to create
@@ -299,7 +299,7 @@ class KerasReviewSummarizer:
         )
         dec_input = self.process_encoding_input(
             target_data,
-            vocab_to_int,
+            words_to_vectors,
             batch_size
         )
         dec_embed_input = tf.nn.embedding_lookup(embeddings, dec_input)
@@ -314,26 +314,26 @@ class KerasReviewSummarizer:
             summary_length,
             max_summary_length,
             rnn_size,
-            vocab_to_int,
+            words_to_vectors,
             keep_prob,
             batch_size,
             num_layers
         )
         return training_logits, inference_logits
 
-    def pad_sentence_batch(self, sentence_batch, vocab_to_int):
+    def pad_sentence_batch(self, sentence_batch, words_to_vectors):
         """Pad sentences with <PAD> so that
         each sentence of a batch has the same length"""
         max_sentence = max([len(sentence) for sentence in sentence_batch])
         result = [
-            sentence + [vocab_to_int['<PAD>']] * (
+            sentence + [words_to_vectors['<PAD>']] * (
                 max_sentence - len(sentence)
             )
             for sentence in sentence_batch
         ]
         return result
 
-    def get_batches(self, summaries, texts, vocab_to_int, batch_size):
+    def get_batches(self, summaries, texts, words_to_vectors, batch_size):
         """Batch summaries, texts, and
         the lengths of their sentences together"""
         for batch_i in range(0, len(texts)//batch_size):
@@ -341,10 +341,10 @@ class KerasReviewSummarizer:
             summaries_batch = summaries[start_i:start_i + batch_size]
             texts_batch = texts[start_i:start_i + batch_size]
             pad_summaries_batch = np.array(
-                self.pad_sentence_batch(summaries_batch, vocab_to_int)
+                self.pad_sentence_batch(summaries_batch, words_to_vectors)
             )
             pad_texts_batch = np.array(
-                self.pad_sentence_batch(texts_batch, vocab_to_int)
+                self.pad_sentence_batch(texts_batch, words_to_vectors)
             )
 
             # Need the lengths for the _lengths parameters
@@ -361,7 +361,7 @@ class KerasReviewSummarizer:
                 pad_summaries_lengths, \
                 pad_texts_lengths
 
-    def train(self, sorted_texts, sorted_summaries, vocab_to_int):
+    def train(self, sorted_texts, sorted_summaries, words_to_vectors):
         # Build the graph
         train_graph = tf.Graph()
         # Set the graph to default to ensure that it is ready for training
@@ -369,20 +369,7 @@ class KerasReviewSummarizer:
 
             # Load the model inputs
             model = self.get_model_inputs()
-
-            print(tf.reverse(model["input_data"], [-1]))
-            print(model["targets"])
-            print(model["keep_probability"])
-            print(model["text_length"])
-            print(model["summary_length"])
-            print(model["text_length"])
-            print(model["max_summary_length"])
-            print(len(vocab_to_int) + 1)
-            print(self.rnn_size)
-            print(self.num_layers)
-            print(self.batch_size)
-
-            return True
+            
             # Create the training and inference logits
             training_logits, inference_logits = self.seq2seq_model(
                 tf.reverse(model["input_data"], [-1]),
@@ -391,10 +378,10 @@ class KerasReviewSummarizer:
                 model["text_length"],
                 model["summary_length"],
                 model["max_summary_length"],
-                len(vocab_to_int) + 1,
+                len(words_to_vectors) + 1,
                 self.rnn_size,
                 self.num_layers,
-                vocab_to_int,
+                words_to_vectors,
                 self.batch_size
             )
 
@@ -434,7 +421,7 @@ class KerasReviewSummarizer:
                     for grad, var in gradients if grad is not None
                 ]
                 train_op = optimizer.apply_gradients(capped_gradients)
-        print("Graph is built.")
+        self.say("Graph is built.")
 
         # ## Training the Model
 
@@ -459,8 +446,8 @@ class KerasReviewSummarizer:
         end = start + 50000
         sorted_summaries_short = sorted_summaries[start:end]
         sorted_texts_short = sorted_texts[start:end]
-        print("The shortest text length:", len(sorted_texts_short[0]))
-        print("The longest text length:", len(sorted_texts_short[-1]))
+        self.say("The shortest text length:", len(sorted_texts_short[0]))
+        self.say("The longest text length:", len(sorted_texts_short[-1]))
 
         # Train the Model
         display_step = 20  # Check training loss after every 20 batches
@@ -492,7 +479,7 @@ class KerasReviewSummarizer:
                     self.get_batches(
                         sorted_summaries_short,
                         sorted_texts_short,
-                        vocab_to_int,
+                        words_to_vectors,
                         self.batch_size
                     )
                 ):
@@ -515,7 +502,7 @@ class KerasReviewSummarizer:
                     batch_time = end_time - start_time
 
                     if batch_i % display_step == 0 and batch_i > 0:
-                        print(
+                        self.say(
                             '''Epoch {:>3}/{} Batch {:>4}/{}
                             - Loss: {:>6.3f}, Seconds: {:>4.2f}'''.format(
                                 epoch_i,
@@ -529,7 +516,7 @@ class KerasReviewSummarizer:
                         batch_loss = 0
 
                     if batch_i % update_check == 0 and batch_i > 0:
-                        print("Average loss for this update:", round(
+                        self.say("Average loss for this update:", round(
                             update_loss/update_check, 3)
                         )
                         summary_update_loss.append(update_loss)
@@ -537,13 +524,13 @@ class KerasReviewSummarizer:
                         # If the update loss is at a new minimum,
                         # save the model
                         if update_loss <= min(summary_update_loss):
-                            print('New Record!')
+                            self.say('New Record!')
                             stop_early = 0
                             saver = tf.train.Saver()
                             saver.save(sess, checkpoint)
 
                         else:
-                            print("No Improvement.")
+                            self.say("No Improvement.")
                             stop_early += 1
                             if stop_early == stop:
                                 break
@@ -555,7 +542,7 @@ class KerasReviewSummarizer:
                     self.learning_rate = self.min_learning_rate
 
                 if stop_early == stop:
-                    print("Stopping Training.")
+                    self.say("Stopping Training.")
                     break
 
     # ## Making Our Own Summaries
@@ -565,17 +552,17 @@ class KerasReviewSummarizer:
     # You can set the length of the summary to a fixed value,
     # or use a random value like I have here.
 
-    def text_to_seq(self, text, vocab_to_int, int_to_vocab):
+    def text_to_seq(self, text, words_to_vectors, vectors_to_words):
         '''Prepare the text for the model'''
         data_preprocessor = DataPreprocessor(self.in_verbose_mode)
         text = data_preprocessor.clean_text(text)
         result = [
-            vocab_to_int.get(word, int_to_vocab['<UNK>'])
+            words_to_vectors.get(word, vectors_to_words['<UNK>'])
             for word in text.split()
         ]
         return result
 
-    def run(self, clean_texts, vocab_to_int, int_to_vocab):
+    def run(self, clean_texts, words_to_vectors, vectors_to_words):
         # Create your own review or use one from the dataset
         # input_sentence = "I have never eaten an apple before,
         # but this red one was nice.
@@ -583,7 +570,7 @@ class KerasReviewSummarizer:
         # text = text_to_seq(input_sentence)
         random = np.random.randint(0, len(clean_texts))
         input_sentence = clean_texts[random]
-        text = self.text_to_seq(clean_texts[random], vocab_to_int, int_to_vocab)
+        text = self.text_to_seq(clean_texts[random], words_to_vectors, vectors_to_words)
 
         checkpoint = "./best_model.ckpt"
 
@@ -612,29 +599,29 @@ class KerasReviewSummarizer:
                 }
             )[0]
 
-        pad = vocab_to_int["<PAD>"]
+        pad = words_to_vectors["<PAD>"]
 
-        print('Original Text:', input_sentence)
+        self.say('Original Text:', input_sentence)
 
-        print('\nText')
-        print('  Word Ids:    {}'.format([i for i in text]))
-        print('  Input Words: {}'.format(
-            " ".join([int_to_vocab[i] for i in text]))
+        self.say('\nText')
+        self.say('  Word Ids:    {}'.format([i for i in text]))
+        self.say('  Input Words: {}'.format(
+            " ".join([vectors_to_words[i] for i in text]))
         )
 
-        print('\nSummary')
-        print('  Word Ids:       {}'.format(
+        self.say('\nSummary')
+        self.say('  Word Ids:       {}'.format(
             [i for i in answer_logits if i != pad])
         )
-        print('  Response Words: {}'.format(
-            " ".join([int_to_vocab[i] for i in answer_logits if i != pad]))
+        self.say('  Response Words: {}'.format(
+            " ".join([vectors_to_words[i] for i in answer_logits if i != pad]))
         )
 
     def say(self, message, end="\n"):
         if self.in_verbose_mode is True:
             if self.do_print_verbose_header is True:
                 current_time = datetime.now().strftime('%H:%M:%S')
-                print(
+                self.say(
                     "[{}|{}]: {}".format(
                         current_time,
                         self.__class__.__name__,
@@ -643,7 +630,7 @@ class KerasReviewSummarizer:
                     end=end
                 )
             else:
-                print(message, end=end)
+                self.say(message, end=end)
         if end != "\n":
             self.do_print_verbose_header = False
         else:
