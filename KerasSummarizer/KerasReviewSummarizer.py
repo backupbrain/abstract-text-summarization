@@ -625,8 +625,7 @@ class KerasReviewSummarizer:
         rnn_size,
         num_layers,
         words_to_vectors,
-        batch_size,
-        word_embedding_matrix
+        batch_size
     ):
         '''
         Use the previous functions to
