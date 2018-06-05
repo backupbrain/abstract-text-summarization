@@ -5,6 +5,7 @@ import numpy as np
 from .zero_state_tensors_patch import _zero_state_tensors
 from datetime import datetime
 
+
 class KerasReviewSummarizer:
     in_verbose_mode = False
     do_print_verbose_header = True
@@ -25,11 +26,10 @@ class KerasReviewSummarizer:
         self.say("Loading tensorflow and numpy...")
         if word_vectors is not None:
             self.load_word_vectors(word_vectors)
-        if embeddings_index_filename is not None:
-            self.__load_embeddings_index(
-                embeddings_index_filename,
-                words_to_vectors
-            )
+        self.__load_embeddings_index(
+            embeddings_index_filename,
+            words_to_vectors
+        )
 
     def __initialize_model(self):
         '''Create palceholders for inputs to the model'''
@@ -357,7 +357,7 @@ class KerasReviewSummarizer:
                 embedding = np.asarray(values[1:], dtype='float32')
                 self.embeddings_index[word] = embedding
         self.say("done")
-        word_embedding_matrix = self.__build_word_embeddings_matrix(
+        self.__build_word_embeddings_matrix(
             self.words_to_vectors
         )
 
@@ -365,45 +365,20 @@ class KerasReviewSummarizer:
         self.say("Building word embeddings matrix... ", "")
         embedding_dim = 300
         num_words = len(words_to_vectors)
-        word_embedding_matrix = np.zeros(
+        self.word_embedding_matrix = np.zeros(
             (num_words, embedding_dim),
             dtype=np.float32
         )
         for word, i in words_to_vectors.items():
             if word in self.embeddings_index:
-                word_embedding_matrix[i] = self.embeddings_index[word]
+                self.word_embedding_matrix[i] = self.embeddings_index[word]
             else:
                 # if word is not in CN, cerate a random embedding
                 new_embedding = np.array(
                     np.random.uniform(-1.0, 1.0, embedding_dim)
                 )
                 self.embeddings_index[word] = new_embedding
-                word_embedding_matrix[i] = new_embedding
-        # Check if value matches len(words_to_vectors)
-        # print(len(word_embedding_matrix))
-        self.say("done")
-        return word_embedding_matrix
-
-
-        embedding_dim = 300
-        nb_words = len(words_to_vectors)
-        # Create matrix with default values of zero
-        self.word_embedding_matrix = np.zeros(
-            (nb_words, embedding_dim),
-            dtype=np.float32
-        )
-        for word, i in words_to_vectors.items():
-            if word in self.embeddings_index:
-                self.word_embedding_matrix[int(i)] = \
-                    self.embeddings_index[word]
-            else:
-                # If word not in CN, create a random embedding for it
-                new_embedding = np.array(
-                    np.random.uniform(-1.0, 1.0, embedding_dim)
-                )
-                self.embeddings_index[str(word)] = new_embedding
-                self.word_embedding_matrix[int(i)] = new_embedding
-
+                self.word_embedding_matrix[i] = new_embedding
         # Check if value matches len(words_to_vectors)
         # print(len(word_embedding_matrix))
         self.say("done")
@@ -650,7 +625,8 @@ class KerasReviewSummarizer:
         rnn_size,
         num_layers,
         words_to_vectors,
-        batch_size
+        batch_size,
+        word_embedding_matrix
     ):
         '''
         Use the previous functions to
