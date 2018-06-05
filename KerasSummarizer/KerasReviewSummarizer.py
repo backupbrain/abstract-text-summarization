@@ -372,7 +372,7 @@ class KerasReviewSummarizer:
 
             print(tf.reverse(model["input_data"], [-1]))
 
-            return
+            return True
             # Create the training and inference logits
             training_logits, inference_logits = self.seq2seq_model(
                 tf.reverse(model["input_data"], [-1]),
