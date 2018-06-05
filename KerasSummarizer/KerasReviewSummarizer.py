@@ -472,7 +472,7 @@ class KerasReviewSummarizer:
                     cell_bw,
                     rnn_inputs,
                     sequence_length,
-                    dtype=tf.float32
+                    dtype=tf.int32
                 )
 
         # Join outputs since we are using a bidirectional RNN
