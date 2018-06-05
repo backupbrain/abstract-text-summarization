@@ -39,9 +39,9 @@ class KerasReviewSummarizerManager:
         self.keras_summarizer.initialize_model()
         self.say("Done")
 
-    def build_graph(self, model):
-        self.say("Building model...")
-        self.keras_summarizer.build_graph(model)
+    def build_graph(self, model, words_to_vectors):
+        self.say("Building graph...")
+        self.keras_summarizer.build_graph(model, words_to_vectors)
         self.say("Done")
 
     def load_data_from_prefix(self, file_prefix):

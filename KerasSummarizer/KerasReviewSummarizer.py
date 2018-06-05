@@ -90,10 +90,9 @@ class KerasReviewSummarizer:
     def load_word_vectors(self, word_vectors):
         self.word_vectors = word_vectors
 
-    def build_graph(self, model):
+    def build_graph(self, model, words_to_vectors):
         self.say("Building graph...")
-        words_to_vectors = self.words_to_vectors
-        # keep_probability = 0.75
+        self.words_to_vectors = words_to_vectors
 
         # Build the graph
         train_graph = tf.Graph()
