@@ -70,7 +70,7 @@ class KerasReviewSummarizerManager:
         )
         self.say("Running...")
         self.keras_summarizer.run(
-            word_vectors["reviews"],
+            word_vectors,
             words_to_vectors,
             vectors_to_words
         )
