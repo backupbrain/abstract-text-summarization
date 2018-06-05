@@ -58,7 +58,7 @@ class KerasReviewSummarizer:
             name='summary_length'
         )
         max_summary_length = tf.reduce_max(
-            self.summary_length,
+            summary_length,
             name='max_dec_len'
         )
         text_length = tf.placeholder(
