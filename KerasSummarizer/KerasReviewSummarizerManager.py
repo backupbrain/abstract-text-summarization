@@ -1,4 +1,5 @@
 from .KerasReviewSummarizer import KerasReviewSummarizer
+from .DataPreprocessor import DataPreprocessor
 import pickle
 import gzip
 from datetime import datetime
@@ -10,6 +11,7 @@ class KerasReviewSummarizerManager:
     keras_summarizer = None
     TEXT_VECTORS_FILE = 'text_vectors.pklz'
     WORDS_TO_VECTORS_FILE = 'word_vectors.pklz'
+    VECTORS_TO_WORDS_FILE = 'vectors_to_words.pklz'
     WORD_EMBEDDINGS_FILE = 'embeddings.pklz'
 
     def __init__(
@@ -18,6 +20,29 @@ class KerasReviewSummarizerManager:
     ):
         self.in_verbose_mode = in_verbose_mode
         self.say("In verbose mode")
+
+    def get_cleaned_reviews(self, filename):
+        data_preprocessor = DataPreprocessor(self.in_verbose_mode)
+        reviews_summaries = data_preprocessor.load_data_from_csv(filename)
+        unwanted_headers = [
+            'Id',
+            'ProductId',
+            'UserId',
+            'ProfileName',
+            'HelpfulnessNumerator',
+            'HelpfulnessDenominator',
+            'Score',
+            'Time'
+        ]
+        reviews_summaries = data_preprocessor.drop_unwanted_columns(
+            reviews_summaries,
+            unwanted_headers
+        )
+        cleaned_reviews_summaries = \
+            data_preprocessor.clean_reviews_summaries(
+                reviews_summaries
+            )
+        return cleaned_reviews_summaries["reviews"]
 
     def train(self, word_embeddings, word_vectors, words_to_vectors):
         self.keras_summarizer = KerasReviewSummarizer(
@@ -36,8 +61,8 @@ class KerasReviewSummarizerManager:
         self,
         word_embeddings,
         word_vectors,
-        vectors_to_words,
-        words_to_vectors
+        words_to_vectors,
+        vectors_to_words
     ):
         self.keras_summarizer = KerasReviewSummarizer(
             word_embeddings,
@@ -47,7 +72,7 @@ class KerasReviewSummarizerManager:
         self.keras_summarizer.run(
             word_vectors["reviews"],
             words_to_vectors,
-            vectors_to_int
+            vectors_to_words
         )
         self.say("Done")
 
@@ -61,12 +86,17 @@ class KerasReviewSummarizerManager:
             file_prefix,
             self.WORDS_TO_VECTORS_FILE
         )
+        vectors_to_words_filename = "{}{}".format(
+            file_prefix,
+            self.VECTORS_TO_WORDS_FILE
+        )
         word_embeddings_filename = "{}{}".format(
             file_prefix,
             self.WORD_EMBEDDINGS_FILE
         )
-        self.test_file(words_to_vectors_filename, "rb")
         self.test_file(text_vectors_filename, "rb")
+        self.test_file(words_to_vectors_filename, "rb")
+        self.test_file(vectors_to_words_filename, "rb")
         self.test_file(word_embeddings_filename, "rb")
         file = gzip.open(text_vectors_filename, 'rb')
         text_vectors = pickle.load(file)
@@ -74,11 +104,14 @@ class KerasReviewSummarizerManager:
         file = gzip.open(words_to_vectors_filename, 'rb')
         words_to_vectors = pickle.load(file)
         file.close()
+        file = gzip.open(vectors_to_words_filename, 'rb')
+        vectors_to_words = pickle.load(file)
+        file.close()
         file = gzip.open(word_embeddings_filename, 'rb')
         word_embeddings = pickle.load(file)
         file.close()
         self.say("done")
-        return text_vectors, words_to_vectors, word_embeddings
+        return text_vectors, words_to_vectors, vectors_to_words, word_embeddings
 
     def test_file(self, filename, mode='r'):
         try:

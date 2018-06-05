@@ -20,7 +20,7 @@ class DataPreprocessor:
         self.say("done")
         return data
 
-    def drop_unwanted_columns(self, data, headers=None, in_verbose_mode=False):
+    def drop_unwanted_columns(self, data, headers=None):
         self.say("Dropping unwanted columns")
         self.say("  Original size: {}".format(str(data.shape)))
         data = data.dropna()

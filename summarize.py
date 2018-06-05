@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from KerasSummarizer.KerasReviewSummarizerManager import \
     KerasReviewSummarizerManager
+from KerasSummarizer.DataPreprocessor import DataPreprocessor
 import argparse
 import sys
 
@@ -14,6 +15,10 @@ def build_command_parser():
         'embeddings_file',
         help='Load word embeddings file, eg. ConceptNet Numberbach, '
              'GloVe, or Gigaword'
+    )
+    parser.add_argument(
+        'reviews_file',
+        help='Load the Reviews CSV'
     )
     parser.add_argument(
         'load_prefix',
@@ -37,11 +42,19 @@ def main():
     )
 
     # try:
-    vectors_to_words, words_to_vectors, word_embeddings = \
+    vectors_to_words, words_to_vectors, vectors_to_words, word_embeddings = \
         summarizer_manager.load_data_from_prefix(
             command_arguments.load_prefix
         )
-    summarizer_manager.run(word_embeddings, vectors_to_words, words_to_vectors)
+    cleaned_reviews = summarizer_manager.get_cleaned_reviews(
+        command_arguments.reviews_file,
+        num_reviews=10
+    )
+    summarizer_manager.run(
+        cleaned_reviews,
+        vectors_to_words,
+        words_to_vectors
+    )
     '''
     output_filename = "{}train_data.meta".format(
         command_arguments.load_prefix
