@@ -62,6 +62,10 @@ def main():
         "{}word_vectors.pklz".format(command_arguments.save_file_prefix)
     )
     vectorizor_manager.save_data_to_file(
+        vectors_to_words,
+        "{}vectors_to_words.pklz".format(command_arguments.save_file_prefix)
+    )
+    vectorizor_manager.save_data_to_file(
         words_to_vectors,
         "{}embeddings.pklz".format(command_arguments.save_file_prefix)
     )

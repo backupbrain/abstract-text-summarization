@@ -32,6 +32,25 @@ class KerasReviewSummarizerManager:
         )
         self.say("Done")
 
+    def run(
+        self,
+        word_embeddings,
+        word_vectors,
+        vectors_to_words,
+        words_to_vectors
+    ):
+        self.keras_summarizer = KerasReviewSummarizer(
+            word_embeddings,
+            in_verbose_mode=True
+        )
+        self.say("Running...")
+        self.keras_summarizer.run(
+            word_vectors["reviews"],
+            words_to_vectors,
+            vectors_to_int
+        )
+        self.say("Done")
+
     def load_data_from_prefix(self, file_prefix):
         self.say("Loading data files... ", "")
         text_vectors_filename = "{}{}".format(
