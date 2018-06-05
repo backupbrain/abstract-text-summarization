@@ -41,7 +41,7 @@ def main():
         summarizer_manager.load_data_from_prefix(
             command_arguments.load_prefix
         )
-    summarizer_manager.train()
+    summarizer_manager.train(word_embeddings, word_vectors, words_to_vectors)
     '''
     output_filename = "{}train_data.meta".format(
         command_arguments.load_prefix
