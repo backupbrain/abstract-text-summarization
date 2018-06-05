@@ -523,7 +523,7 @@ class KerasReviewSummarizer:
             inference_decoder,
             output_time_major=False,
             impute_finished=True,
-            maximum_iterations=self.max_summary_length
+            maximum_iterations=max_summary_length
         )
         return inference_logits
 
