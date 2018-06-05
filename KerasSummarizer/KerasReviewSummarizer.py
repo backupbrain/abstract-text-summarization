@@ -365,22 +365,16 @@ class KerasReviewSummarizer:
         with train_graph.as_default():
 
             # Load the model inputs
-            input_data, \
-                    targets, \
-                    lr, \
-                    keep_prob, \
-                    summary_length, \
-                    max_summary_length, \
-                    text_length = self.get_model_inputs()
+            model = self.get_model_inputs()
 
             # Create the training and inference logits
             training_logits, inference_logits = self.seq2seq_model(
-                tf.reverse(input_data, [-1]),
-                targets,
-                keep_prob,
-                text_length,
-                summary_length,
-                max_summary_length,
+                tf.reverse(model["input_data"], [-1]),
+                model["targets"],
+                model["keep_probability"],
+                model["text_length"],
+                model["summary_length"],
+                model["max_summary_length"],
                 len(vocab_to_int) + 1,
                 self.rnn_size,
                 self.num_layers,
@@ -400,8 +394,8 @@ class KerasReviewSummarizer:
 
             # Create the weights for sequence_loss
             masks = tf.sequence_mask(
-                summary_length,
-                max_summary_length,
+                model["summary_length"],
+                model["max_summary_length"],
                 dtype=tf.float32,
                 name='masks'
             )
@@ -410,8 +404,9 @@ class KerasReviewSummarizer:
                 # Loss function
                 cost = tf.contrib.seq2seq.sequence_loss(
                     training_logits,
-                    targets,
-                    masks)
+                    model["targets"],
+                    masks
+                )
 
                 # Optimizer
                 optimizer = tf.train.AdamOptimizer(self.learning_rate)
@@ -489,12 +484,12 @@ class KerasReviewSummarizer:
                     _, loss = sess.run(
                         [train_op, cost],
                         {
-                            input_data: texts_batch,
-                            targets: summaries_batch,
-                            lr: self.learning_rate,
-                            summary_length: summaries_lengths,
-                            text_length: texts_lengths,
-                            keep_prob: self.keep_probability
+                            model["input_data"]: texts_batch,
+                            model["targets"]: summaries_batch,
+                            model["learning_rate"]: self.learning_rate,
+                            model["summary_length"]: summaries_lengths,
+                            model["text_length"]: texts_lengths,
+                            model["keep_probability"]: self.keep_probability
                         }
                     )
 
