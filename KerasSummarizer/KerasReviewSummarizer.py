@@ -101,6 +101,7 @@ class KerasReviewSummarizer:
             training_logits, inference_logits = self.__seq2seq_model(
                 model["targets"],
                 model["keep_probability"],
+                model["text_length"],
                 model["summary_length"],
                 model["max_summary_length"],
                 tf.reverse(model["input_data"], [-1]),
