@@ -2,7 +2,8 @@ import tensorflow as tf
 # import time
 from tensorflow.python.layers.core import Dense
 import numpy as np
-from .zero_state_tensors_patch import _zero_state_tensors
+#from .zero_state_tensors_patch import _zero_state_tensors
+from tensorflow.ops.rnn_cell_impl import _zero_state_tensors
 from datetime import datetime
 
 

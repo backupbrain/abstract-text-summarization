@@ -1,3 +1,4 @@
+from tensorflow.python.util import nest
 
 # from tensorflow.ops.rnn_cell_impl import _zero_state_tensors
 def _zero_state_tensors(state_size, batch_size, dtype):
