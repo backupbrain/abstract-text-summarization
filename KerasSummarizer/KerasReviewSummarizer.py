@@ -102,7 +102,7 @@ class KerasReviewSummarizer:
                 model["targets"],
                 model["keep_probability"],
                 model["summary_length"],
-                model[".max_summary_length"],
+                model["max_summary_length"],
                 tf.reverse(model["input_data"], [-1]),
                 len(words_to_vectors)+1,
                 rnn_size,
