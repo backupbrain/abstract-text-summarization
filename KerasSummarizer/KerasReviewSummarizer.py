@@ -6,7 +6,7 @@ from tensorflow.python.ops.rnn_cell_impl import _zero_state_tensors
 from datetime import datetime
 
 
-class KerasReviewSummarizer1:
+class KerasReviewSummarizer:
     in_verbose_mode = False
     do_print_verbose_header = True
 
