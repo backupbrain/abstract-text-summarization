@@ -44,7 +44,7 @@ class KerasReviewSummarizer:
         '''Create palceholders for inputs to the model'''
         self.say("  Initializing model... ", "")
         input_data = tf.placeholder(
-            tf.float32,
+            tf.int32,
             [None, None],
             name='input'
         )
