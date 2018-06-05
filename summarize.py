@@ -58,6 +58,7 @@ def main():
         "love individual oatmeal cups found years ago sam quit selling sound big lots quit selling found target expensive buy individually trilled get entire case time go anywhere need water microwave spoon know quaker flavor packets"
     ]
     summarizer_manager.run(
+        word_embeddings,
         cleaned_reviews,
         vectors_to_words,
         words_to_vectors
