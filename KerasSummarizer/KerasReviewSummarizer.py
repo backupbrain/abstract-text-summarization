@@ -7,6 +7,9 @@ from datetime import datetime
 
 
 class KerasReviewSummarizer1:
+    in_verbose_mode = False
+    do_print_verbose_header = True
+
     word_embedding_matrix = None
     epochs = 100
     batch_size = 64
@@ -18,8 +21,10 @@ class KerasReviewSummarizer1:
     learning_rate_decay = 0.95
     min_learning_rate = 0.0005
 
-    def __init__(self, word_embedding_matrix):
+    def __init__(self, word_embedding_matrix, in_verbose_mode=False):
         self.word_embedding_matrix = word_embedding_matrix
+        self.in_verbose_mode = in_verbose_mode
+        self.say("In verbose mode")
 
     def get_model_inputs(self):
         '''Create palceholders for inputs to the model'''
