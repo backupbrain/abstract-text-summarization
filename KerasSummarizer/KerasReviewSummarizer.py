@@ -10,7 +10,7 @@ from .DataPreprocessor import DataPreprocessor
 class KerasReviewSummarizer:
     in_verbose_mode = False
     do_print_verbose_header = True
-    
+
     TEXT_CODES = ["<UNK>", "<PAD>", "<EOS>", "<GO>"]
 
     word_embedding_matrix = None
@@ -554,6 +554,7 @@ class KerasReviewSummarizer:
 
     def text_to_seq(self, text, vocab_to_int):
         '''Prepare the text for the model'''
+        print(vocab_to_int)
         data_preprocessor = DataPreprocessor(self.in_verbose_mode)
         text = data_preprocessor.clean_text(text)
         result = [
