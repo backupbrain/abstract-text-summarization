@@ -147,7 +147,6 @@ class KerasReviewSummarizer:
                 train_op = optimizer.apply_gradients(capped_gradients)
         self.say("Done")
 
-    '''
     def train(self, output_filename):
         # Since I am training this model on my MacBook Pro,
         # it would take me days if I used the whole dataset.
@@ -201,12 +200,12 @@ class KerasReviewSummarizer:
                     _, loss = sess.run(
                         [train_op, cost],
                         {
-                            self.input_data: texts_batch,
-                            self.targets: summaries_batch,
-                            self.learning_rate: learning_rate,
-                            self.summary_length: summaries_lengths,
-                            self.text_length: texts_lengths,
-                            self.keep_prob: keep_probability
+                            input_data: texts_batch,
+                            targets: summaries_batch,
+                            learning_rate: learning_rate,
+                            summary_length: summaries_lengths,
+                            text_length: texts_lengths,
+                            keep_prob: keep_probability
                          }
                     )
 
@@ -255,7 +254,7 @@ class KerasReviewSummarizer:
                 if stop_early == stop:
                     self.say("Stopping Training.")
                     break
-
+    '''
     def summarize(self, model_filename):
         # Create your own review or use one from the dataset
         # input_sentence = "I have never eaten an apple before,
