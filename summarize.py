@@ -46,10 +46,17 @@ def main():
         summarizer_manager.load_data_from_prefix(
             command_arguments.load_prefix
         )
+    '''
     cleaned_reviews = summarizer_manager.get_cleaned_reviews(
         command_arguments.reviews_file,
         num_reviews=10
     )
+    '''
+    cleaned_reviews = [
+        "The coffee tasted great and was at such a good price! I highly recommend this to everyone!",
+        "This is the worst cheese that I have ever bought! I will never buy it again and I hope you won't either!",
+        "love individual oatmeal cups found years ago sam quit selling sound big lots quit selling found target expensive buy individually trilled get entire case time go anywhere need water microwave spoon know quaker flavor packets"
+    ]
     summarizer_manager.run(
         cleaned_reviews,
         vectors_to_words,
