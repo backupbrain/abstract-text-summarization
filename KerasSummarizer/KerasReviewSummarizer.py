@@ -510,7 +510,7 @@ class KerasReviewSummarizer:
                                 batch_i,
                                 len(sorted_texts_short) // self.batch_size,
                                 batch_loss / display_step,
-                                batch_time*display_step
+                                batch_time * display_step
                             )
                         )
                         batch_loss = 0
