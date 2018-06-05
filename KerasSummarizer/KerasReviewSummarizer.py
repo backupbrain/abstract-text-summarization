@@ -16,6 +16,13 @@ class KerasReviewSummarizer:
     batch_size = 64
     epochs = 100
 
+    rnn_size = 256
+    num_layers = 2
+    learning_rate = 0.005
+    keep_probability = 0.75
+    learning_rate_decay = 0.95
+    min_learning_rate = 0.0005
+
     def __init__(
         self,
         word_vectors=None,
@@ -86,9 +93,6 @@ class KerasReviewSummarizer:
     def build_graph(self):
         self.say("Building graph...")
         words_to_vectors = self.words_to_vectors
-        rnn_size = 256
-        num_layers = 2
-        learning_rate = 0.005
         # keep_probability = 0.75
 
         # Build the graph
@@ -106,8 +110,8 @@ class KerasReviewSummarizer:
                 model["max_summary_length"],
                 tf.reverse(model["input_data"], [-1]),
                 len(words_to_vectors)+1,
-                rnn_size,
-                num_layers,
+                self.rnn_size,
+                self.num_layers,
                 words_to_vectors,
                 self.batch_size
             )
@@ -136,7 +140,7 @@ class KerasReviewSummarizer:
                     self.masks
                 )
                 # Optimizer
-                self.optimizer = tf.train.AdamOptimizer(learning_rate)
+                self.optimizer = tf.train.AdamOptimizer(self.learning_rate)
                 # Gradient Clipping
                 self.gradients = self.optimizer.compute_gradients(self.cost)
                 self.capped_gradients = [
@@ -155,6 +159,7 @@ class KerasReviewSummarizer:
         sorted_texts,
         train_graph,
         model,
+        words_to_vectors,
         output_filename
     ):
         # Since I am training this model on my MacBook Pro,
@@ -181,8 +186,6 @@ class KerasReviewSummarizer:
         self.say("The longest text length:", len(sorted_texts_short[-1]))
 
         # Train the Model
-        learning_rate_decay = 0.95
-        min_learning_rate = 0.0005
         display_step = 20  # Check training loss after every 20 batches
         stop_early = 0
         stop = 3   # If update loss does not decrease in 3 update checks, stop
@@ -205,18 +208,28 @@ class KerasReviewSummarizer:
             for epoch_i in range(1, self.epochs+1):
                 update_loss = 0
                 batch_loss = 0
-                for batch_i, (summaries_batch, texts_batch, summaries_lengths, texts_lengths) in enumerate(
-                        self.__get_batches(sorted_summaries_short, sorted_texts_short, self.batch_size)):
+                for batch_i, (
+                    summaries_batch,
+                    texts_batch,
+                    summaries_lengths,
+                    texts_lengths
+                ) in enumerate(
+                        self.__get_batches(
+                            sorted_summaries_short,
+                            sorted_texts_short,
+                            self.batch_size,
+                            words_to_vectors
+                        )):
                     start_time = time.time()
                     _, loss = sess.run(
                         [self.train_op, self.cost],
                         {
                             model["input_data"]: texts_batch,
                             model["targets"]: summaries_batch,
-                            model["learning_rate"]: learning_rate,
+                            model["learning_rate"]: self.learning_rate,
                             model["summary_length"]: summaries_lengths,
                             model["text_length"]: texts_lengths,
-                            model["keep_probability"]: keep_probability
+                            model["keep_probability"]: self.keep_probability
                          }
                     )
 
@@ -260,9 +273,9 @@ class KerasReviewSummarizer:
                         update_loss = 0
 
                 # Reduce learning rate, but not below its minimum value
-                learning_rate *= learning_rate_decay
-                if learning_rate < min_learning_rate:
-                    learning_rate = min_learning_rate
+                self.learning_rate *= self.learning_rate_decay
+                if self.learning_rate < self.min_learning_rate:
+                    self.learning_rate = self.min_learning_rate
 
                 if stop_early == stop:
                     self.say("Stopping Training.")
@@ -685,7 +698,7 @@ class KerasReviewSummarizer:
         self.say("Done building Sequence 2 Sequence model")
         return training_logits, inference_logits
 
-    def __get_batches(self, summaries, texts, batch_size):
+    def __get_batches(self, summaries, texts, batch_size, words_to_vectors):
         """
         Batch summaries, texts, and the lengths of their sentences together
         """
@@ -694,9 +707,11 @@ class KerasReviewSummarizer:
             summaries_batch = summaries[start_i:start_i + batch_size]
             texts_batch = texts[start_i:start_i + batch_size]
             pad_summaries_batch = np.array(
-                self.__pad_sentence_batch(summaries_batch)
+                self.__pad_sentence_batch(summaries_batch, words_to_vectors)
             )
-            pad_texts_batch = np.array(self.__pad_sentence_batch(texts_batch))
+            pad_texts_batch = np.array(
+                self.__pad_sentence_batch(texts_batch, words_to_vectors),
+            )
 
             # Need the lengths for the _lengths parameters
             pad_summaries_lengths = []
@@ -707,16 +722,21 @@ class KerasReviewSummarizer:
             for text in pad_texts_batch:
                 pad_texts_lengths.append(len(text))
 
-            yield pad_summaries_batch, pad_texts_batch, pad_summaries_lengths, pad_texts_lengths
+            yield pad_summaries_batch, \
+                pad_texts_batch, \
+                pad_summaries_lengths, \
+                pad_texts_lengths
 
-    def __pad_sentence_batch(self, sentence_batch):
+    def __pad_sentence_batch(self, sentence_batch, words_to_vectors):
         """
         Pad sentences with <PAD>
         so that each sentence of a batch has the same length
         """
         max_sentence = max([len(sentence) for sentence in sentence_batch])
         result = [
-            sentence + [words_to_vectors['<PAD>']] * (max_sentence - len(sentence))
+            sentence + [words_to_vectors['<PAD>']] * (
+                max_sentence - len(sentence)
+            )
             for sentence in sentence_batch
         ]
         return result

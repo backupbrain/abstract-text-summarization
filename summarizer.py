@@ -46,7 +46,8 @@ def main():
         words_to_vectors,
         command_arguments.embeddings_file
     )
-    summarizer_manager.build_model()
+    model = summarizer_manager.build_model()
+
     # except Exception as e:
     #     sys.exit("Error: {}".format(str(e)))
 
