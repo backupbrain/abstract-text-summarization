@@ -46,8 +46,21 @@ def main():
         words_to_vectors,
         command_arguments.embeddings_file
     )
-    model = summarizer_manager.build_model()
+    model = summarizer_manager.initialize_model()
+    train_graph = summarizer_manager.build_graph()
 
+    output_filename = "{}train_data.meta".format(
+        command_arguments.load_prefix
+    )
+
+    summarizer_manager.train(
+        word_vectors["summaries"],
+        word_vectors["reviews"],
+        train_graph,
+        model,
+        words_to_vectors,
+        output_filename
+    )
     # except Exception as e:
     #     sys.exit("Error: {}".format(str(e)))
 

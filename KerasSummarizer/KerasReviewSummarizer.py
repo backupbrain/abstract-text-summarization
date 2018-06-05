@@ -40,7 +40,7 @@ class KerasReviewSummarizer:
             words_to_vectors
         )
 
-    def __initialize_model(self):
+    def initialize_model(self):
         '''Create palceholders for inputs to the model'''
         self.say("  Initializing model... ", "")
         input_data = tf.placeholder(
@@ -90,7 +90,7 @@ class KerasReviewSummarizer:
     def load_word_vectors(self, word_vectors):
         self.word_vectors = word_vectors
 
-    def build_graph(self):
+    def build_graph(self, model):
         self.say("Building graph...")
         words_to_vectors = self.words_to_vectors
         # keep_probability = 0.75
@@ -99,8 +99,6 @@ class KerasReviewSummarizer:
         train_graph = tf.Graph()
         # Set the graph to default to ensure that it is ready for training
         with train_graph.as_default():
-            model = self.__initialize_model()
-
             # Create the training and inference logits
             self.training_logits, self.inference_logits = self.__seq2seq_model(
                 model["targets"],
