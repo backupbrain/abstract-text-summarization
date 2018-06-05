@@ -44,7 +44,7 @@ class KerasReviewSummarizer:
         '''Create palceholders for inputs to the model'''
         self.say("  Initializing model... ", "")
         input_data = tf.placeholder(
-            tf.int32,
+            tf.float32,
             [None, None],
             name='input'
         )
@@ -472,7 +472,7 @@ class KerasReviewSummarizer:
                     cell_bw,
                     rnn_inputs,
                     sequence_length,
-                    dtype=tf.int32
+                    dtype=tf.float32  # was tf.float32, but crashes
                 )
 
         # Join outputs since we are using a bidirectional RNN
