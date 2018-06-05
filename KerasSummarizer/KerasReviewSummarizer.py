@@ -33,6 +33,7 @@ class KerasReviewSummarizer:
 
     def __initialize_model(self):
         '''Create palceholders for inputs to the model'''
+        self.say("  Initializing model... ", "")
         input_data = tf.placeholder(
             tf.int32,
             [None, None],
@@ -74,6 +75,7 @@ class KerasReviewSummarizer:
             "max_summary_length": max_summary_length,
             "text_length": text_length
         }
+        self.say("done")
         return model
 
     def load_word_vectors(self, word_vectors):
